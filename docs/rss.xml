@@ -1,2 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Wellwei's Blog</title><link>https://wellwei.github.io</link><description>Wellwei's Blog</description><copyright>Wellwei's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.com/Opt-SCon/picx-images-hosting/raw/master/739a279af36c717c-removebg-preview.1hs2ujlm6i.webp</url><title>avatar</title><link>https://wellwei.github.io</link></image><lastBuildDate>Mon, 24 Jun 2024 10:17:32 +0000</lastBuildDate><managingEditor>Wellwei's Blog</managingEditor><ttl>60</ttl><webMaster>Wellwei's Blog</webMaster><item><title>Test</title><link>https://wellwei.github.io/post/Test.html</link><description># good。</description><guid isPermaLink="true">https://wellwei.github.io/post/Test.html</guid><pubDate>Mon, 24 Jun 2024 09:50:23 +0000</pubDate></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Wellwei's Blog</title><link>https://wellwei.github.io</link><description>Wellwei's Blog</description><copyright>Wellwei's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.com/Opt-SCon/picx-images-hosting/raw/master/739a279af36c717c-removebg-preview.1hs2ujlm6i.webp</url><title>avatar</title><link>https://wellwei.github.io</link></image><lastBuildDate>Thu, 19 Sep 2024 14:45:27 +0000</lastBuildDate><managingEditor>Wellwei's Blog</managingEditor><ttl>60</ttl><webMaster>Wellwei's Blog</webMaster><item><title>CAS新同学须知</title><link>https://wellwei.github.io/post/CAS-xin-tong-xue-xu-zhi.html</link><description># CAS新同学须知&#13;
+&#13;
+亲爱的新同学们:&#13;
+&#13;
+欢迎了解加入我们的CAS协会!为了帮助大家更好地了解协会并开始学习,请仔细阅读以下重要信息:&#13;
+&#13;
+## 1. 群备注修改&#13;
+&#13;
+请所有大一新生将QQ群备注修改为:年级+专业+班级+姓名&#13;
+例如:24网工一班何志宏&#13;
+&#13;
+这样可以方便我们统计作业情况。</description><guid isPermaLink="true">https://wellwei.github.io/post/CAS-xin-tong-xue-xu-zhi.html</guid><pubDate>Thu, 19 Sep 2024 14:45:00 +0000</pubDate></item><item><title>Test</title><link>https://wellwei.github.io/post/Test.html</link><description># good。</description><guid isPermaLink="true">https://wellwei.github.io/post/Test.html</guid><pubDate>Mon, 24 Jun 2024 09:50:23 +0000</pubDate></item></channel></rss>
