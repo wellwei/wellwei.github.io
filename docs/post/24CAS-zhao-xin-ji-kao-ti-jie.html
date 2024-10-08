@@ -259,64 +259,7 @@ void solve() {
 
 ### H
 
-只需要计算有效期在第n天有效的，即计算第$n-k+1$ 天到第$n$ 的券的数量即可，用等差数列求和公式易求
-
-答案运算过程中，可能超过int的数据范围，所以要用long long
-
-```cpp
-void solve() {
-    long long n, k;
-    scanf('%lld%lld', &n, &k);
-    long long res = n * (n + 1) / 2 - (n - k) * (n - k + 1) / 2; 
-    // 1~n的和减去1~(n-k)的和就是 (n-k+1)~n的和
-    if (res % 2) printf('NO\n');
-    else printf('YES\n');
-}
-```
-
-
-
-### I
-
-解决问题的时间取决于x和y中的最小值
-
-```cpp
-void solve() {
-    int n, x, y;
-    scanf('%d%d%d', &n, &x, &y);
-    printf('%d\n', (int)ceil(1.0 * n / min(x, y)));		// 要向上取整
-}
-```
-
-
-
-### J
-
-通过观察可以得知如果两个区间不相交的话那么只需要关一扇门，否则要将相交区的每个门都关上（注意判断边界没门的情况）
-
-```cpp
-void solve() {
-    int l, r, L, R;
-    scanf('%d%d%d%d', &l, &r, &L, &R);
-    int ll = max(l, L), rr = min(r, R);     // 相交区间的左右边界
-    int ql = min(l, L), qr = max(r, R);     // 整个区间的左右边界
-    if (ll > rr) printf('1\n');     // 如果两个区间不相交那么只需关一扇门
-    else {                          // 否则要将相交区的每个门关上
-        int ans = rr - ll;      // 相交房间之间的门
-        if (ll > ql) ++ans;     
-        if (rr < qr) ++ ans;    // 相交区最外围的两个门（如果存在）
-        printf('%d\n', ans);
-    }
-}
-```
-
-
-
-
-
-### K
-
-先分别求出正x方向和正y方向各要走多少步cx、cy。">
+关键的观察是 $i^i$ 的奇偶性与 $i$ 相同。">
 <meta property="og:title" content="24CAS招新机考题解">
 <meta property="og:description" content="### 前言
 
@@ -567,64 +510,7 @@ void solve() {
 
 ### H
 
-只需要计算有效期在第n天有效的，即计算第$n-k+1$ 天到第$n$ 的券的数量即可，用等差数列求和公式易求
-
-答案运算过程中，可能超过int的数据范围，所以要用long long
-
-```cpp
-void solve() {
-    long long n, k;
-    scanf('%lld%lld', &n, &k);
-    long long res = n * (n + 1) / 2 - (n - k) * (n - k + 1) / 2; 
-    // 1~n的和减去1~(n-k)的和就是 (n-k+1)~n的和
-    if (res % 2) printf('NO\n');
-    else printf('YES\n');
-}
-```
-
-
-
-### I
-
-解决问题的时间取决于x和y中的最小值
-
-```cpp
-void solve() {
-    int n, x, y;
-    scanf('%d%d%d', &n, &x, &y);
-    printf('%d\n', (int)ceil(1.0 * n / min(x, y)));		// 要向上取整
-}
-```
-
-
-
-### J
-
-通过观察可以得知如果两个区间不相交的话那么只需要关一扇门，否则要将相交区的每个门都关上（注意判断边界没门的情况）
-
-```cpp
-void solve() {
-    int l, r, L, R;
-    scanf('%d%d%d%d', &l, &r, &L, &R);
-    int ll = max(l, L), rr = min(r, R);     // 相交区间的左右边界
-    int ql = min(l, L), qr = max(r, R);     // 整个区间的左右边界
-    if (ll > rr) printf('1\n');     // 如果两个区间不相交那么只需关一扇门
-    else {                          // 否则要将相交区的每个门关上
-        int ans = rr - ll;      // 相交房间之间的门
-        if (ll > ql) ++ans;     
-        if (rr < qr) ++ ans;    // 相交区最外围的两个门（如果存在）
-        printf('%d\n', ans);
-    }
-}
-```
-
-
-
-
-
-### K
-
-先分别求出正x方向和正y方向各要走多少步cx、cy。">
+关键的观察是 $i^i$ 的奇偶性与 $i$ 相同。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://wellwei.github.io/post/24CAS-zhao-xin-ji-kao-ti-jie.html">
 <meta property="og:image" content="https://gitee.com/wellme/photo/raw/master/data/avatar.3yeeq64kqg.webp">
@@ -862,7 +748,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     }
 }</pre></div>
 <h3>H</h3>
-<p>只需要计算有效期在第n天有效的，即计算第$n-k+1$ 天到第$n$ 的券的数量即可，用等差数列求和公式易求</p>
+<p>关键的观察是 $i^i$ 的奇偶性与 $i$ 相同。因此，问题归结为找出以 $n$ 结尾的 $k$ 个连续整数的和是奇数还是偶数。这可以通过找出 $n-k+1, n-k+2, \ldots, n-1, n$ 的和来完成，即$S_{1 \sim n} - S_{n - k \sim n}$，使用等差公式$n \times (n + 1) / 2$，然后检查它的奇偶性。或者，可以计算那些 $k$ 个连续整数中奇数的数量。</p>
 <p>答案运算过程中，可能超过int的数据范围，所以要用long long</p>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">void</span> <span class="pl-en">solve</span>() {
     <span class="pl-k">long</span> <span class="pl-k">long</span> n, k;
