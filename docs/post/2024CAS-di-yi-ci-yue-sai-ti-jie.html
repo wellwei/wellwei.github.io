@@ -304,7 +304,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }</pre></div>
 <h2>F</h2>
-<p>因为要求舍入后的最大值，所以只需要找到能舍入的最高位即可（从左往右第一个 $&amp;gt;=5$的数）</p>
+<p>因为要求舍入后的最大值，所以只需要找到能舍入的最高位即可（从左往右第一个 $ &gt;=5 $的数）</p>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">2e5</span> + <span class="pl-c1">10</span>;
 <span class="pl-k">char</span> s[N];
 <span class="pl-k">int</span> n, t;
@@ -507,10 +507,10 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <h2>M</h2>
 <p>能最多把k个0变成1的话，并且要求最多连续1的长度，那我们就可以直接遍历这<br>
 个数组，找到符合题目条件的长度，然后一直取到最大值即可，如果暴力遍历的<br>
-话肯定是会超时的，n最大是$1e5$，k最大是<code class="notranslate">1e5</code>，O（n * k）的复杂度是不行的，<br>
+话肯定是会超时的，n最大是<code class="notranslate">1e5</code>，k最大是<code class="notranslate">1e5</code>，O（n * k）的复杂度是不行的，<br>
 本题可以先进行前缀和再采取双指针的解决方案复杂度为O（n）。<br>
 因为数组中只有0或1，因此前缀和的意思是方便找出区间的1的总个数，在遍历<br>
-的时候，判断条件必须是 $(s[r] - s[l - 1] + k &amp;gt;= r - l + 1)$ ，<code class="notranslate">r</code>指针才会<br>
+的时候，判断条件必须是 $ (s[r] - s[l - 1] + k &gt;= r - l + 1 ) $ ，<code class="notranslate">r</code>指针才会<br>
 往右加，不然就算l指针往右加。这个判断是意思是[l，r]区间的1的个数加上可<br>
 以把0变成1的个数，要大于这个区间长度，因为这个k是最多，所以可能会超<br>
 出.</p>
