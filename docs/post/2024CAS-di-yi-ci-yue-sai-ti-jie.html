@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://gitee.com/wellme/photo/raw/master/data/avatar.3yeeq64kqg.webp"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="## 难度一览
+
+* 简单题：A、D、L
+* 中等题：B、G、H、I、M
+* 难题：E、F、J、K
+
+
+
+## A
+
+题意：找到矩形的长和宽、利用最大公约数化简。">
+<meta property="og:title" content="2024CAS第一次月赛题解">
+<meta property="og:description" content="## 难度一览
+
+* 简单题：A、D、L
+* 中等题：B、G、H、I、M
+* 难题：E、F、J、K
+
+
+
+## A
+
+题意：找到矩形的长和宽、利用最大公约数化简。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://wellwei.github.io/post/2024CAS-di-yi-ci-yue-sai-ti-jie.html">
+<meta property="og:image" content="https://gitee.com/wellme/photo/raw/master/data/avatar.3yeeq64kqg.webp">
+<title>2024CAS第一次月赛题解</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">2024CAS第一次月赛题解</h1>
+<div class="title-right">
+    <a href="https://wellwei.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/wellwei/wellwei.github.io/issues/4" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h2>难度一览</h2>
+<ul>
+<li>简单题：A、D、L</li>
+<li>中等题：B、G、H、I、M</li>
+<li>难题：E、F、J、K</li>
+</ul>
+<h2>A</h2>
+<p>题意：找到矩形的长和宽、利用最大公约数化简。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stdio.h<span class="pl-pds">&gt;</span></span> 
+<span class="pl-k">char</span> s[<span class="pl-c1">520</span>][<span class="pl-c1">520</span>]; 
+<span class="pl-k">int</span> n, m; 
+
+<span class="pl-k">int</span> <span class="pl-en">gcd</span>(<span class="pl-k">int</span> a, <span class="pl-k">int</span> b) {  
+    <span class="pl-k">return</span> b ? <span class="pl-c1">gcd</span>(b, a % b) : a; 
+}  
+  
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {  
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d%d<span class="pl-pds">"</span></span>, &amp;n, &amp;m); 
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++)  
+        <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%s<span class="pl-pds">"</span></span>, (s + i));	<span class="pl-c"><span class="pl-c">//</span> s + i 就相当于s[i]</span>
+  
+    <span class="pl-k">int</span> wid = <span class="pl-c1">0</span>, hei = <span class="pl-c1">0</span>, stx, sty; <span class="pl-c"><span class="pl-c">//</span> 矩形宽度、高度以及矩阵开始坐标  </span>
+    <span class="pl-k">int</span> flag = <span class="pl-c1">0</span>; <span class="pl-c"><span class="pl-c">//</span> 标记是否找到起始点'x'  </span>
+  
+    <span class="pl-c"><span class="pl-c">//</span> 查找第一个'x'的位置作为起始点  </span>
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++) {  
+        <span class="pl-k">for</span> (<span class="pl-k">int</span> j = <span class="pl-c1">0</span>; j &lt; m; j++) {  
+            <span class="pl-k">if</span> (s[i][j] == <span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>) {  
+                stx = i;  
+                sty = j;  
+                flag = <span class="pl-c1">1</span>;  
+                <span class="pl-k">break</span>;  
+            }  
+        }  
+        <span class="pl-k">if</span> (flag) <span class="pl-k">break</span>; <span class="pl-c"><span class="pl-c">//</span> 如果找到'x'，则退出循环  </span>
+    }  
+  
+    <span class="pl-c"><span class="pl-c">//</span> 从起始点开始，向下计算高度  </span>
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = stx; i &lt; n; i++) {  
+        <span class="pl-k">if</span> (s[i][sty] == <span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>) ++hei;  
+        <span class="pl-k">else</span> <span class="pl-k">break</span>; <span class="pl-c"><span class="pl-c">//</span> 如果遇到非'x'字符，则停止计算高度  </span>
+    }  
+  
+    <span class="pl-c"><span class="pl-c">//</span> 从起始点开始，向右计算宽度  </span>
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> j = sty; j &lt; m; j++) {  
+        <span class="pl-k">if</span> (s[stx][j] == <span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>) ++wid;  
+        <span class="pl-k">else</span> <span class="pl-k">break</span>; <span class="pl-c"><span class="pl-c">//</span> 如果遇到非'x'字符，则停止计算宽度  </span>
+    }  
+  
+    <span class="pl-c"><span class="pl-c">//</span> 计算找到的矩形区域的宽和高的最大公约数，用于找到最小矩形  </span>
+    <span class="pl-k">int</span> t = <span class="pl-c1">gcd</span>(wid, hei);  
+    wid /= t;  
+    hei /= t;  
+  
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= hei; i++) {  
+        <span class="pl-k">for</span> (<span class="pl-k">int</span> j = <span class="pl-c1">1</span>; j &lt;= wid; j++) {  
+            <span class="pl-c1">putchar</span>(<span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>); 
+        }  
+        <span class="pl-c1">puts</span>(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>); <span class="pl-c"><span class="pl-c">//</span> 输出换行符</span>
+    }  
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>; 
+}
+</pre></div>
+<h2>B</h2>
+<p>题意：计算<strong>有多少个数，恰好等于集合中另外两个（不同的）数之和</strong></p>
+<h3>方法一</h3>
+<p>用一个数组标记 $i$ 的数量，循环两数和与第一个数，判断另一个数是否存在。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">int</span> a[<span class="pl-c1">100010</span>];
+<span class="pl-k">int</span> num[<span class="pl-c1">100010</span>];	<span class="pl-c"><span class="pl-c">//</span>每个数的数量</span>
+<span class="pl-k">int</span> n, m;
+ 
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;n);
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++) {
+        <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;a[i]);
+        num[a[i]]++;
+    }
+    <span class="pl-k">int</span> ans = <span class="pl-c1">0</span>;
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++) {
+        <span class="pl-k">for</span> (<span class="pl-k">int</span> j = <span class="pl-c1">1</span>; j &lt;= n; j++) {
+            <span class="pl-k">if</span> (a[j] &gt; a[i]) <span class="pl-k">continue</span>;
+            <span class="pl-k">int</span> k = a[i] - a[j];	<span class="pl-c"><span class="pl-c">//</span>判断第二个数是否存在</span>
+            <span class="pl-k">if</span> (k == a[j]) {	<span class="pl-c"><span class="pl-c">//</span>如果两数相同需要判断是否有两个</span>
+                <span class="pl-k">if</span> (num[k] &gt; <span class="pl-c1">1</span>) {
+                    ++ans;
+                    <span class="pl-k">break</span>;
+                }
+            } <span class="pl-k">else</span> {
+                <span class="pl-k">if</span> (num[k]) {	<span class="pl-c"><span class="pl-c">//</span>如果第二个数存在那么答案++</span>
+                    ++ans;
+                    <span class="pl-k">break</span>;
+                }
+            }
+        }
+    }
+    cout &lt;&lt; ans &lt;&lt; endl;
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<h3>方法二</h3>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span> 先排序，再找前面有多少组数据满足</span>
+<span class="pl-c"><span class="pl-c">//</span> 该题要注意：都是正整数，因此l++后，和一定增加，r--后，和一定减少</span>
+<span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">100</span>;
+<span class="pl-k">int</span> a[N];
+<span class="pl-k">int</span> n;
+<span class="pl-k">void</span> <span class="pl-en">solve</span>()
+{
+	<span class="pl-k">int</span> ans = <span class="pl-c1">0</span>;<span class="pl-c"><span class="pl-c">//</span> 答案</span>
+	<span class="pl-k">int</span> flag = n - <span class="pl-c1">1</span>;<span class="pl-c"><span class="pl-c">//</span> 目标和的下标</span>
+	<span class="pl-k">while</span> (flag &gt;= <span class="pl-c1">2</span>)<span class="pl-c"><span class="pl-c">//</span> 一定要满足有三个数l, r, flag</span>
+	{
+		<span class="pl-k">int</span> l = <span class="pl-c1">0</span>, r = flag - <span class="pl-c1">1</span>;
+		<span class="pl-k">while</span> (l &lt; r)
+		{
+			<span class="pl-k">if</span> (a[l] + a[r] == a[flag])
+			{
+				ans++;
+				<span class="pl-k">break</span>;<span class="pl-c"><span class="pl-c">//</span> 得出答案就退出，因为他并不需要计算有多少组满足 a[l] + a[r] = a[flag] </span>
+			}
+			<span class="pl-k">else</span> <span class="pl-k">if</span> (a[l] + a[r] &gt; a[flag])
+				r--;
+			<span class="pl-k">else</span>
+				l++;
+		}
+		flag--;
+	}
+	cout &lt;&lt; ans &lt;&lt; endl;
+}
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+	cin &gt;&gt; n;
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++)
+		cin &gt;&gt; a[i];
+	<span class="pl-c1">sort</span>(a, a + n);
+	<span class="pl-c1">solve</span>();
+	<span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<h2>C</h2>
+<p>签到题，按题意输出即可</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span><span class="pl-s"><span class="pl-pds">&lt;</span>stdio.h<span class="pl-pds">&gt;</span></span>
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+	<span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>Concentration Acceptance Software<span class="pl-pds">"</span></span>);
+	<span class="pl-k">return</span> <span class="pl-c1">0</span>; 
+} 
+</pre></div>
+<h2>D</h2>
+<p>每个题单在当天dyh都会写一个题。<br>
+对于每个题单增长到最高的时候只有两种情况</p>
+<ul>
+<li>
+<p>①被清空后递增到n后又递减回来</p>
+</li>
+<li>
+<p>②被清空后递减到1后又递增回来</p>
+<p>假设当前题单i，前面有x个题单，后面有y个题单<br>
+例举可以发现最大数量为max(x,y)*2个题。</p>
+</li>
+</ul>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>bits/stdc++.h<span class="pl-pds">&gt;</span></span> 
+<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span> 
+<span class="pl-k">int</span> n; 
+<span class="pl-k">int</span> <span class="pl-en">main</span>() { 
+	cin &gt;&gt; n; 
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++) {
+		<span class="pl-c"><span class="pl-c">//</span> 对于当前题单i，计算其前面和后面的题单数量中的较大值  </span>
+		<span class="pl-c"><span class="pl-c">//</span> i表示当前题单的索引，n-i-1表示当前题单后面的题单数量  </span>
+		<span class="pl-k">int</span> x = <span class="pl-c1">max</span>(i, n - i - <span class="pl-c1">1</span>);
+		<span class="pl-c"><span class="pl-c">//</span> 1. 被清空后递增到n后又递减回来  </span>
+		<span class="pl-c"><span class="pl-c">//</span> 2. 被清空后递减到1后又递增回来  </span>
+		<span class="pl-c"><span class="pl-c">//</span> 在这两种情况下，最大数量都是前后题单数量的两倍  </span>
+		cout &lt;&lt; x * <span class="pl-c1">2</span> &lt;&lt; endl;
+	}
+	<span class="pl-k">return</span> <span class="pl-c1">0</span>; 
+}
+
+</pre></div>
+<h2>E</h2>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span>橙子蛋糕 </span>
+#<span class="pl-k">include</span><span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-k">long</span> <span class="pl-k">long</span> n, k;
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%lld%lld<span class="pl-pds">"</span></span>,&amp;n,&amp;k); 
+
+    <span class="pl-c"><span class="pl-c">//</span> 推断易得 k 与 n - k 的结果一样，故要判断补数n - k</span>
+    <span class="pl-c"><span class="pl-c">//</span> 如果 k 大于 n 的一半，则计算 k 的补数，并赋值回 k</span>
+    <span class="pl-k">if</span> (k &gt; n / <span class="pl-c1">2</span>)
+        k = n - k; <span class="pl-c"><span class="pl-c">//</span> 选择较小的 k 可以简化后续计算</span>
+        
+    <span class="pl-c"><span class="pl-c">//</span> 如果 k 等于 n 减 k，即刚好是对角，就可以直接输出 n</span>
+    <span class="pl-k">if</span> (k == n - k)
+        <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%lld<span class="pl-pds">"</span></span>,n); 
+    <span class="pl-k">else</span>
+        <span class="pl-c"><span class="pl-c">//</span> 正常的选取情况就是 n*k + 1</span>
+        <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%lld<span class="pl-pds">"</span></span>,n * k + <span class="pl-c1">1</span>); 
+
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<h2>F</h2>
+<p>因为要求舍入后的最大值，所以只需要找到能舍入的最高位即可（从左往右第一个 $&amp;gt;=5$的数）</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">const</span> <span class="pl-k">int</span> N = <span class="pl-c1">2e5</span> + <span class="pl-c1">10</span>;
+<span class="pl-k">char</span> s[N];
+<span class="pl-k">int</span> n, t;
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d %d<span class="pl-pds">"</span></span>, &amp;n, &amp;t);
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%s<span class="pl-pds">"</span></span>, s);
+    <span class="pl-k">int</span> pos;<span class="pl-c"><span class="pl-c">//</span>记录小数点的位置</span>
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++) {
+        <span class="pl-k">if</span> (s[i] == <span class="pl-s"><span class="pl-pds">'</span>.<span class="pl-pds">'</span></span>) {
+            pos = i;
+            <span class="pl-k">break</span>;
+        }
+    }
+    <span class="pl-k">int</span> len = n; <span class="pl-c"><span class="pl-c">//</span>记录保留字符串的长度</span>
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = pos + <span class="pl-c1">1</span>; i &lt; n; i++) {
+        <span class="pl-k">if</span> (s[i] &gt;= <span class="pl-s"><span class="pl-pds">'</span>5<span class="pl-pds">'</span></span>) { <span class="pl-c"><span class="pl-c">//</span>从左往右找到第一个大于等于5的数字的位置开始四舍五入</span>
+            len = i;
+            t--;
+            i--;
+            <span class="pl-k">while</span> (s[i] == <span class="pl-s"><span class="pl-pds">'</span>4<span class="pl-pds">'</span></span> &amp;&amp; t != <span class="pl-c1">0</span>) { <span class="pl-c"><span class="pl-c">//</span>检查是否能继续四舍五入</span>
+                len = i;
+                t--;
+                i--;
+            }
+            <span class="pl-k">if</span> (s[i] == <span class="pl-s"><span class="pl-pds">'</span>.<span class="pl-pds">'</span></span>) { <span class="pl-c"><span class="pl-c">//</span>检查是否需要进位到整数部分</span>
+                len = i;
+                i--;
+                <span class="pl-k">while</span> (s[i] == <span class="pl-s"><span class="pl-pds">'</span>9<span class="pl-pds">'</span></span>) { <span class="pl-c"><span class="pl-c">//</span>处理如果进位到整数最后一位是9的情况</span>
+                    s[i] = <span class="pl-s"><span class="pl-pds">'</span>0<span class="pl-pds">'</span></span>;
+                    i--;
+                }
+                <span class="pl-k">if</span> (i == -<span class="pl-c1">1</span>) {
+                    <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>1<span class="pl-pds">"</span></span>);<span class="pl-c"><span class="pl-c">//</span>处理进位到最前面的情况（如99.5到100）</span>
+                }
+                <span class="pl-k">else</span> s[i] += <span class="pl-c1">1</span>;
+            }
+            <span class="pl-k">else</span> s[i] += <span class="pl-c1">1</span>;
+            <span class="pl-k">break</span>;
+        }
+    }
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; len; i++) {
+        <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%c<span class="pl-pds">"</span></span>, s[i]);
+    }
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<h2>G</h2>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">int</span> t, n;
+<span class="pl-k">int</span> a[<span class="pl-c1">200005</span>], x;
+<span class="pl-k">int</span> ans = -<span class="pl-c1">1000000</span>;
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;n);
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++) {
+        <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;a[i]);
+        <span class="pl-k">if</span> (x + a[i] &gt; <span class="pl-c1">0</span>)
+            x += a[i];
+        <span class="pl-c"><span class="pl-c">//</span> 判断是否将当前整数加入当前的子序列中</span>
+        <span class="pl-c"><span class="pl-c">//</span> 如果加入后子序列的和仍然为正，则加入</span>
+        <span class="pl-k">else</span>
+            x = a[i]; <span class="pl-c"><span class="pl-c">//</span>说明a[i]是负数，但记下这个负数的原因是防止所有元素都是负数</span>
+        <span class="pl-c"><span class="pl-c">//</span>都是负数的话，答案理应是最大的那个负数</span>
+        ans= <span class="pl-c1">max</span>(ans, x);
+    }
+    <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, ans);
+}</pre></div>
+<h2>H</h2>
+<p>注意一个地方可以购买多次，如果位置 $i$ 的价格是 $ i $ 到 $ n $ 价格中最小的那么就尽可能多购买。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">const</span> <span class="pl-k">int</span> N=<span class="pl-c1">2e5</span>+<span class="pl-c1">10</span>;
+<span class="pl-k">int</span> a[N],mi[N];
+
+<span class="pl-k">void</span> <span class="pl-en">solve</span>() {
+	<span class="pl-k">int</span> n;
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;n);
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; ++i) {
+        <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;a[i]);
+	}
+	mi[n] = <span class="pl-c1">2e9</span>; <span class="pl-c"><span class="pl-c">//</span> 将最后一个元素初始化为一个很大的值，以便后续比较</span>
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = n - <span class="pl-c1">1</span>; i &gt;= <span class="pl-c1">0</span>; --i) {
+		mi[i] = <span class="pl-c1">min</span>(a[i], mi[i + <span class="pl-c1">1</span>]); <span class="pl-c"><span class="pl-c">//</span> 从后往前找最小值</span>
+	}
+	<span class="pl-k">int</span> ans = <span class="pl-c1">0</span>;
+	<span class="pl-k">int</span> sum = <span class="pl-c1">0</span>;
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; ++i) {
+		++sum; <span class="pl-c"><span class="pl-c">//</span> 每次循环增加计数</span>
+		<span class="pl-k">if</span> (a[i] == mi[i]) { <span class="pl-c"><span class="pl-c">//</span> 如果当前元素是该位置后的最小值</span>
+			<span class="pl-k">int</span> t = sum / a[i]; <span class="pl-c"><span class="pl-c">//</span> 计算可以“消耗”的块数</span>
+			ans += t; <span class="pl-c"><span class="pl-c">//</span> 更新结果</span>
+			sum -= t * a[i]; <span class="pl-c"><span class="pl-c">//</span> 减去所“消耗”的数量</span>
+		}
+	}
+    <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, ans);
+}
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+	<span class="pl-c1">solve</span>();
+	<span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<h2>I</h2>
+<p>对于唐嘉富来说，最优的策略是对数组中最大的x个元素取反。因此，为了最小化唐嘉富造成的损害，孙洁龙应该总是移除一些最大的元素。<br>
+为了解决这个问题，我们可以对数组进行排序，并遍历i（0≤i≤k），其中i是孙洁龙移除的元素数量。<br>
+对于每个i，我们知道孙洁龙将移除数组中最大的i个元素，然后唐嘉富会对剩下的x个最大元素取反。<br>
+因此，我们可以利用前缀和快速计算出最终的和。由于排序的存在，时间复杂度为O(nlogn)。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>bits/stdc++.h<span class="pl-pds">&gt;</span></span> 
+<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span> 
+<span class="pl-k">int</span> A[<span class="pl-c1">2000010</span>];
+<span class="pl-k">void</span> <span class="pl-en">solve</span>() {
+	<span class="pl-k">int</span> n, k, x; 
+	cin &gt;&gt; n &gt;&gt; k &gt;&gt; x; 
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++) 
+		cin &gt;&gt; A[i];
+	<span class="pl-c1">sort</span>(A + <span class="pl-c1">1</span>, A + n + <span class="pl-c1">1</span>, greater&lt;<span class="pl-k">int</span>&gt;()); <span class="pl-c"><span class="pl-c">//</span> 这里使用了C++的排序函数sort，C语言可使用qsort函数或者手搓快速排序。</span>
+	
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++)
+		A[i] += A[i - <span class="pl-c1">1</span>];<span class="pl-c"><span class="pl-c">//</span> 计算前缀和，A[i]现在表示前i个元素的和 </span>
+		
+	<span class="pl-k">int</span> ans = -<span class="pl-c1">1e9</span>; <span class="pl-c"><span class="pl-c">//</span> 初始化答案为一个非常小的数（负无穷大的近似值） </span>
+	<span class="pl-c"><span class="pl-c">//</span> 遍历孙洁龙可能移除的元素数量 i（ 0 到 k ） </span>
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt;= k; i++)
+		<span class="pl-c"><span class="pl-c">//</span> 更新答案，取当前答案和（ A[n]（总和）- 2 * A[min(i + x, n)]（</span>
+		<span class="pl-c"><span class="pl-c">//</span>移除i个后唐嘉富取反x个的和的两倍，因为取反相当于减去两倍）+ A[i]（孙洁龙移除i个的和））的较大值 </span>
+		ans = <span class="pl-c1">max</span>(ans, A[n] - <span class="pl-c1">2</span> * A[<span class="pl-c1">min</span>(i + x, n)] + A[i]);
+	
+    <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, ans);
+}
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+	<span class="pl-k">int</span> tc; 
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;tc);
+	<span class="pl-k">while</span> (tc--)
+		<span class="pl-c1">solve</span>();
+}</pre></div>
+<h2>J</h2>
+<p>通过画图易得：</p>
+<p><code class="notranslate">1  x  n</code> 答案就是 n，m中得较大者</p>
+<p><code class="notranslate">2  x  n</code>分三种情况：</p>
+<ul>
+<li>第一种即 m 可以被2整除但不可以被4整除，那么最优方案即 <code class="notranslate">n + m</code><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5c1b5619606c824a5bb01d5ef5383fbd39fc962fe7a9a55ec25052b6f30e73af/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379732532306d6f6434312e706e67"><img src="https://camo.githubusercontent.com/5c1b5619606c824a5bb01d5ef5383fbd39fc962fe7a9a55ec25052b6f30e73af/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379732532306d6f6434312e706e67" alt="" data-canonical-src="https://gitee.com/wellme/photo/raw/master/data/casys%20mod41.png" style="max-width: 100%;"></a></li>
+<li>第二种即 m 即可被2整除又可被4整除，最优方案即放满其中一排即 <code class="notranslate">max(n, m)</code><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f517ec53e291c83bd5e9e827d16f2a816251b3f44ac3c41b30f77e569a8454fc/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379736d6f6434312e706e67"><img src="https://camo.githubusercontent.com/f517ec53e291c83bd5e9e827d16f2a816251b3f44ac3c41b30f77e569a8454fc/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379736d6f6434312e706e67" alt="" data-canonical-src="https://gitee.com/wellme/photo/raw/master/data/casysmod41.png" style="max-width: 100%;"></a></li>
+<li>第三种即m为奇数，最优方案为<code class="notranslate">max(n, m) + 1</code><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7d39dd52fbbc16fc5fc3f37d3c04318fe53f6d714b85102a7f6574c588e50b3f/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f515132303234313130332d3230343133392e706e67"><img src="https://camo.githubusercontent.com/7d39dd52fbbc16fc5fc3f37d3c04318fe53f6d714b85102a7f6574c588e50b3f/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f515132303234313130332d3230343133392e706e67" alt="" data-canonical-src="https://gitee.com/wellme/photo/raw/master/data/QQ20241103-204139.png" style="max-width: 100%;"></a></li>
+</ul>
+<p>其他情况易得数量为 <code class="notranslate">(n x m + 1) / 2</code></p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">void</span> <span class="pl-en">solve</span>() {
+    <span class="pl-k">int</span> n, m;
+    cin &gt;&gt; n &gt;&gt; m;
+    <span class="pl-k">if</span> (n == <span class="pl-c1">1</span> || m == <span class="pl-c1">1</span>)
+        <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, <span class="pl-c1">max</span>(n, m));
+    <span class="pl-k">else</span> <span class="pl-k">if</span> (n == <span class="pl-c1">2</span> || m == <span class="pl-c1">2</span>) {
+        <span class="pl-k">if</span> (n == <span class="pl-c1">2</span> &amp;&amp; m % <span class="pl-c1">2</span> == <span class="pl-c1">0</span> &amp;&amp; m % <span class="pl-c1">4</span> != <span class="pl-c1">0</span>)
+            <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, n + m);
+        
+        <span class="pl-k">else</span> <span class="pl-k">if</span> (m == <span class="pl-c1">2</span> &amp;&amp; n % <span class="pl-c1">2</span> == <span class="pl-c1">0</span> &amp;&amp; n % <span class="pl-c1">4</span> != <span class="pl-c1">0</span>)
+            <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, n + m);
+        
+        <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-c1">max</span>(n, m) % <span class="pl-c1">2</span> == <span class="pl-c1">0</span>)
+            <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, <span class="pl-c1">max</span>(n, m));
+        
+        <span class="pl-k">else</span> <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, <span class="pl-c1">max</span>(n, m) + <span class="pl-c1">1</span>);
+    } 
+    <span class="pl-k">else</span> <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, (n * m + <span class="pl-c1">1</span>) / <span class="pl-c1">2</span>);
+}
+ 
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+    <span class="pl-k">int</span> t = <span class="pl-c1">1</span>;
+    <span class="pl-k">while</span> (t--)
+        <span class="pl-c1">solve</span>();
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<h2>K</h2>
+<p>只需要先将每一个学妹以结束时间排一次序，得到一个排序后的结构体数组，<br>
+存储第一个学妹的结束时间，然后以结束时间为准，<br>
+跟下一个学妹开始时间比较，不小于第一个学妹的结束时间就证明不冲突，然后计数，<br>
+再记录下这个学妹的结束时间，以此类推，最后输出总次数就可以了。<br>
+（因为将结束时间排序，所以只要确定开始时间没有冲突，那整段时间就不会又任何冲突）</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span><span class="pl-s"><span class="pl-pds">&lt;</span>stdio.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span><span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span><span class="pl-c"><span class="pl-c">//</span>算法库(包含sort函数) </span>
+<span class="pl-k">struct</span> <span class="pl-en">st</span> { <span class="pl-c"><span class="pl-c">//</span>（定义一个结构体数组，分别储存开始时间和结束时间）</span>
+	<span class="pl-k">int</span> a;<span class="pl-c"><span class="pl-c">//</span>（开始时间）</span>
+	<span class="pl-k">int</span> b;<span class="pl-c"><span class="pl-c">//</span>（结束时间）</span>
+} x[<span class="pl-c1">1000010</span>];
+
+<span class="pl-k">bool</span> <span class="pl-en">cmp</span>(st x, st y) { <span class="pl-c"><span class="pl-c">//</span>（不管开始时间，直接按照结束时间排序）</span>
+	<span class="pl-k">return</span> x.<span class="pl-smi">b</span> &lt; y.<span class="pl-smi">b</span>;
+}
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+	<span class="pl-k">int</span> n, ans = <span class="pl-c1">1</span>, cnt;
+	<span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;n);
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++) {
+		<span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d%d<span class="pl-pds">"</span></span>, &amp;x[i].<span class="pl-smi">a</span>, &amp;x[i].<span class="pl-smi">b</span>);
+	} 
+	<span class="pl-c1">std::sort</span>(x + <span class="pl-c1">1</span>, x + n + <span class="pl-c1">1</span>, cmp); <span class="pl-c"><span class="pl-c">//</span>（排序）亦可手写自定义关键字快速排序</span>
+	cnt = x[<span class="pl-c1">1</span>].<span class="pl-smi">b</span>; <span class="pl-c"><span class="pl-c">//</span>（无脑记录第一个值）</span>
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">2</span>; i &lt;= n; i++) {
+		<span class="pl-k">if</span> (x[i].<span class="pl-smi">a</span> &gt;= cnt) { <span class="pl-c"><span class="pl-c">//</span>（找到符合要求的，记录）</span>
+			ans++;<span class="pl-c"><span class="pl-c">//</span>（计数）</span>
+			cnt = x[i].<span class="pl-smi">b</span>;
+		}
+	}
+
+	<span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>,ans);
+	<span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<h2>M</h2>
+<p>能最多把k个0变成1的话，并且要求最多连续1的长度，那我们就可以直接遍历这<br>
+个数组，找到符合题目条件的长度，然后一直取到最大值即可，如果暴力遍历的<br>
+话肯定是会超时的，n最大是$1e5$，k最大是<code class="notranslate">1e5</code>，O（n * k）的复杂度是不行的，<br>
+本题可以先进行前缀和再采取双指针的解决方案复杂度为O（n）。<br>
+因为数组中只有0或1，因此前缀和的意思是方便找出区间的1的总个数，在遍历<br>
+的时候，判断条件必须是 $(s[r] - s[l - 1] + k &amp;gt;= r - l + 1)$ ，<code class="notranslate">r</code>指针才会<br>
+往右加，不然就算l指针往右加。这个判断是意思是[l，r]区间的1的个数加上可<br>
+以把0变成1的个数，要大于这个区间长度，因为这个k是最多，所以可能会超<br>
+出.</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
+<span class="pl-k">int</span> a[<span class="pl-c1">100520</span>],s[<span class="pl-c1">100520</span>];
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+	<span class="pl-k">int</span> n, k;
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d%d<span class="pl-pds">"</span></span>, &amp;n, &amp;k);
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++)
+        <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;a[i]);
+
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++) {
+		s[i] = s[i - <span class="pl-c1">1</span>] + a[i];
+	}
+	<span class="pl-k">int</span> ans = -<span class="pl-c1">0x3f3f3f3f</span>;
+	<span class="pl-k">int</span> l = <span class="pl-c1">1</span>, r = <span class="pl-c1">1</span>;
+	<span class="pl-k">while</span> (r &lt;= n) {
+		<span class="pl-k">if</span> (s[r] - s[l - <span class="pl-c1">1</span>] + k &gt;= r - l + <span class="pl-c1">1</span>) {
+			ans = <span class="pl-c1">max</span>(ans, r - l + <span class="pl-c1">1</span>);
+			r++;
+		} <span class="pl-k">else</span> {
+			l++;
+		}
+	}
+    <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, ans);
+	<span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://wellwei.github.io">Wellwei's Blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","wellwei/wellwei.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+<script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</html>
