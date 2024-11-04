@@ -1,11 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Wellwei's Blog</title><link>https://wellwei.github.io</link><description>Wellwei's Blog</description><copyright>Wellwei's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://gitee.com/wellme/photo/raw/master/data/avatar.3yeeq64kqg.webp</url><title>avatar</title><link>https://wellwei.github.io</link></image><lastBuildDate>Mon, 04 Nov 2024 12:01:44 +0000</lastBuildDate><managingEditor>Wellwei's Blog</managingEditor><ttl>60</ttl><webMaster>Wellwei's Blog</webMaster><item><title>2024CAS第一次月赛题解</title><link>https://wellwei.github.io/post/2024CAS-di-yi-ci-yue-sai-ti-jie.html</link><description>## 难度一览&#13;
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>Wellwei's Blog</title><link>https://wellwei.github.io</link><description>Wellwei's Blog</description><copyright>Wellwei's Blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://gitee.com/wellme/photo/raw/master/data/avatar.3yeeq64kqg.webp</url><title>avatar</title><link>https://wellwei.github.io</link></image><lastBuildDate>Mon, 04 Nov 2024 12:08:45 +0000</lastBuildDate><managingEditor>Wellwei's Blog</managingEditor><ttl>60</ttl><webMaster>Wellwei's Blog</webMaster><item><title>2024CAS第一次月赛题解</title><link>https://wellwei.github.io/post/2024CAS-di-yi-ci-yue-sai-ti-jie.html</link><description>## 难度一览&#13;
 &#13;
-* 简单题：A、D、L&#13;
-* 中等题：B、G、H、I、M&#13;
-* 难题：E、F、J、K&#13;
-&#13;
-&#13;
+- 简单题：[A](#a)、[D](#d)、[L](#l)&#13;
+- 中等题：[B](#b)、[G](#g)、[H](#h)、[I](#i)、[M](#m)&#13;
+- 难题：[E](#e)、[F](#f)、[J](#j)、[K](#k)&#13;
 &#13;
 ## A&#13;
 &#13;

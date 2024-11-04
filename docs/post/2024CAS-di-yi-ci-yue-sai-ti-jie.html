@@ -12,11 +12,9 @@
     </script>
 <meta name="description" content="## 难度一览
 
-* 简单题：A、D、L
-* 中等题：B、G、H、I、M
-* 难题：E、F、J、K
-
-
+- 简单题：[A](#a)、[D](#d)、[L](#l)
+- 中等题：[B](#b)、[G](#g)、[H](#h)、[I](#i)、[M](#m)
+- 难题：[E](#e)、[F](#f)、[J](#j)、[K](#k)
 
 ## A
 
@@ -24,11 +22,9 @@
 <meta property="og:title" content="2024CAS第一次月赛题解">
 <meta property="og:description" content="## 难度一览
 
-* 简单题：A、D、L
-* 中等题：B、G、H、I、M
-* 难题：E、F、J、K
-
-
+- 简单题：[A](#a)、[D](#d)、[L](#l)
+- 中等题：[B](#b)、[G](#g)、[H](#h)、[I](#i)、[M](#m)
+- 难题：[E](#e)、[F](#f)、[J](#j)、[K](#k)
 
 ## A
 
@@ -105,65 +101,65 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <div id="content">
 <div class="markdown-body" id="postBody"><h2>难度一览</h2>
 <ul>
-<li>简单题：A、D、L</li>
-<li>中等题：B、G、H、I、M</li>
-<li>难题：E、F、J、K</li>
+<li>简单题：<a href="#a">A</a>、<a href="#d">D</a>、<a href="#l">L</a></li>
+<li>中等题：<a href="#b">B</a>、<a href="#g">G</a>、<a href="#h">H</a>、<a href="#i">I</a>、<a href="#m">M</a></li>
+<li>难题：<a href="#e">E</a>、<a href="#f">F</a>、<a href="#j">J</a>、<a href="#k">K</a></li>
 </ul>
 <h2>A</h2>
 <p>题意：找到矩形的长和宽、利用最大公约数化简。</p>
-<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stdio.h<span class="pl-pds">&gt;</span></span> 
-<span class="pl-k">char</span> s[<span class="pl-c1">520</span>][<span class="pl-c1">520</span>]; 
-<span class="pl-k">int</span> n, m; 
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stdio.h<span class="pl-pds">&gt;</span></span>
+<span class="pl-k">char</span> s[<span class="pl-c1">520</span>][<span class="pl-c1">520</span>];
+<span class="pl-k">int</span> n, m;
 
-<span class="pl-k">int</span> <span class="pl-en">gcd</span>(<span class="pl-k">int</span> a, <span class="pl-k">int</span> b) {  
-    <span class="pl-k">return</span> b ? <span class="pl-c1">gcd</span>(b, a % b) : a; 
-}  
-  
-<span class="pl-k">int</span> <span class="pl-en">main</span>() {  
-    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d%d<span class="pl-pds">"</span></span>, &amp;n, &amp;m); 
-    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++)  
+<span class="pl-k">int</span> <span class="pl-en">gcd</span>(<span class="pl-k">int</span> a, <span class="pl-k">int</span> b) {
+    <span class="pl-k">return</span> b ? <span class="pl-c1">gcd</span>(b, a % b) : a;
+}
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d%d<span class="pl-pds">"</span></span>, &amp;n, &amp;m);
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++)
         <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%s<span class="pl-pds">"</span></span>, (s + i));	<span class="pl-c"><span class="pl-c">//</span> s + i 就相当于s[i]</span>
-  
-    <span class="pl-k">int</span> wid = <span class="pl-c1">0</span>, hei = <span class="pl-c1">0</span>, stx, sty; <span class="pl-c"><span class="pl-c">//</span> 矩形宽度、高度以及矩阵开始坐标  </span>
-    <span class="pl-k">int</span> flag = <span class="pl-c1">0</span>; <span class="pl-c"><span class="pl-c">//</span> 标记是否找到起始点'x'  </span>
-  
-    <span class="pl-c"><span class="pl-c">//</span> 查找第一个'x'的位置作为起始点  </span>
-    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++) {  
-        <span class="pl-k">for</span> (<span class="pl-k">int</span> j = <span class="pl-c1">0</span>; j &lt; m; j++) {  
-            <span class="pl-k">if</span> (s[i][j] == <span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>) {  
-                stx = i;  
-                sty = j;  
-                flag = <span class="pl-c1">1</span>;  
-                <span class="pl-k">break</span>;  
-            }  
-        }  
-        <span class="pl-k">if</span> (flag) <span class="pl-k">break</span>; <span class="pl-c"><span class="pl-c">//</span> 如果找到'x'，则退出循环  </span>
-    }  
-  
-    <span class="pl-c"><span class="pl-c">//</span> 从起始点开始，向下计算高度  </span>
-    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = stx; i &lt; n; i++) {  
-        <span class="pl-k">if</span> (s[i][sty] == <span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>) ++hei;  
-        <span class="pl-k">else</span> <span class="pl-k">break</span>; <span class="pl-c"><span class="pl-c">//</span> 如果遇到非'x'字符，则停止计算高度  </span>
-    }  
-  
-    <span class="pl-c"><span class="pl-c">//</span> 从起始点开始，向右计算宽度  </span>
-    <span class="pl-k">for</span> (<span class="pl-k">int</span> j = sty; j &lt; m; j++) {  
-        <span class="pl-k">if</span> (s[stx][j] == <span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>) ++wid;  
-        <span class="pl-k">else</span> <span class="pl-k">break</span>; <span class="pl-c"><span class="pl-c">//</span> 如果遇到非'x'字符，则停止计算宽度  </span>
-    }  
-  
-    <span class="pl-c"><span class="pl-c">//</span> 计算找到的矩形区域的宽和高的最大公约数，用于找到最小矩形  </span>
-    <span class="pl-k">int</span> t = <span class="pl-c1">gcd</span>(wid, hei);  
-    wid /= t;  
-    hei /= t;  
-  
-    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= hei; i++) {  
-        <span class="pl-k">for</span> (<span class="pl-k">int</span> j = <span class="pl-c1">1</span>; j &lt;= wid; j++) {  
-            <span class="pl-c1">putchar</span>(<span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>); 
-        }  
+
+    <span class="pl-k">int</span> wid = <span class="pl-c1">0</span>, hei = <span class="pl-c1">0</span>, stx, sty; <span class="pl-c"><span class="pl-c">//</span> 矩形宽度、高度以及矩阵开始坐标</span>
+    <span class="pl-k">int</span> flag = <span class="pl-c1">0</span>; <span class="pl-c"><span class="pl-c">//</span> 标记是否找到起始点'x'</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> 查找第一个'x'的位置作为起始点</span>
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++) {
+        <span class="pl-k">for</span> (<span class="pl-k">int</span> j = <span class="pl-c1">0</span>; j &lt; m; j++) {
+            <span class="pl-k">if</span> (s[i][j] == <span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>) {
+                stx = i;
+                sty = j;
+                flag = <span class="pl-c1">1</span>;
+                <span class="pl-k">break</span>;
+            }
+        }
+        <span class="pl-k">if</span> (flag) <span class="pl-k">break</span>; <span class="pl-c"><span class="pl-c">//</span> 如果找到'x'，则退出循环</span>
+    }
+
+    <span class="pl-c"><span class="pl-c">//</span> 从起始点开始，向下计算高度</span>
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = stx; i &lt; n; i++) {
+        <span class="pl-k">if</span> (s[i][sty] == <span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>) ++hei;
+        <span class="pl-k">else</span> <span class="pl-k">break</span>; <span class="pl-c"><span class="pl-c">//</span> 如果遇到非'x'字符，则停止计算高度</span>
+    }
+
+    <span class="pl-c"><span class="pl-c">//</span> 从起始点开始，向右计算宽度</span>
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> j = sty; j &lt; m; j++) {
+        <span class="pl-k">if</span> (s[stx][j] == <span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>) ++wid;
+        <span class="pl-k">else</span> <span class="pl-k">break</span>; <span class="pl-c"><span class="pl-c">//</span> 如果遇到非'x'字符，则停止计算宽度</span>
+    }
+
+    <span class="pl-c"><span class="pl-c">//</span> 计算找到的矩形区域的宽和高的最大公约数，用于找到最小矩形</span>
+    <span class="pl-k">int</span> t = <span class="pl-c1">gcd</span>(wid, hei);
+    wid /= t;
+    hei /= t;
+
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= hei; i++) {
+        <span class="pl-k">for</span> (<span class="pl-k">int</span> j = <span class="pl-c1">1</span>; j &lt;= wid; j++) {
+            <span class="pl-c1">putchar</span>(<span class="pl-s"><span class="pl-pds">'</span>x<span class="pl-pds">'</span></span>);
+        }
         <span class="pl-c1">puts</span>(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>); <span class="pl-c"><span class="pl-c">//</span> 输出换行符</span>
-    }  
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>; 
+    }
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }
 </pre></div>
 <h2>B</h2>
@@ -173,7 +169,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">int</span> a[<span class="pl-c1">100010</span>];
 <span class="pl-k">int</span> num[<span class="pl-c1">100010</span>];	<span class="pl-c"><span class="pl-c">//</span>每个数的数量</span>
 <span class="pl-k">int</span> n, m;
- 
+
 <span class="pl-k">int</span> <span class="pl-en">main</span>() {
     <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;n);
     <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++) {
@@ -219,7 +215,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 			<span class="pl-k">if</span> (a[l] + a[r] == a[flag])
 			{
 				ans++;
-				<span class="pl-k">break</span>;<span class="pl-c"><span class="pl-c">//</span> 得出答案就退出，因为他并不需要计算有多少组满足 a[l] + a[r] = a[flag] </span>
+				<span class="pl-k">break</span>;<span class="pl-c"><span class="pl-c">//</span> 得出答案就退出，因为他并不需要计算有多少组满足 a[l] + a[r] = a[flag]</span>
 			}
 			<span class="pl-k">else</span> <span class="pl-k">if</span> (a[l] + a[r] &gt; a[flag])
 				r--;
@@ -245,61 +241,61 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-k">int</span> <span class="pl-en">main</span>()
 {
 	<span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>Concentration Acceptance Software<span class="pl-pds">"</span></span>);
-	<span class="pl-k">return</span> <span class="pl-c1">0</span>; 
-} 
+	<span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}
 </pre></div>
 <h2>D</h2>
-<p>每个题单在当天dyh都会写一个题。<br>
+<p>每个题单在当天 dyh 都会写一个题。<br>
 对于每个题单增长到最高的时候只有两种情况</p>
 <ul>
 <li>
-<p>①被清空后递增到n后又递减回来</p>
+<p>① 被清空后递增到 n 后又递减回来</p>
 </li>
 <li>
-<p>②被清空后递减到1后又递增回来</p>
-<p>假设当前题单i，前面有x个题单，后面有y个题单<br>
-例举可以发现最大数量为max(x,y)*2个题。</p>
+<p>② 被清空后递减到 1 后又递增回来</p>
+<p>假设当前题单 i，前面有 x 个题单，后面有 y 个题单<br>
+例举可以发现最大数量为 max(x,y)*2 个题。</p>
 </li>
 </ul>
-<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>bits/stdc++.h<span class="pl-pds">&gt;</span></span> 
-<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span> 
-<span class="pl-k">int</span> n; 
-<span class="pl-k">int</span> <span class="pl-en">main</span>() { 
-	cin &gt;&gt; n; 
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>bits/stdc++.h<span class="pl-pds">&gt;</span></span>
+<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
+<span class="pl-k">int</span> n;
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+	cin &gt;&gt; n;
 	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; n; i++) {
-		<span class="pl-c"><span class="pl-c">//</span> 对于当前题单i，计算其前面和后面的题单数量中的较大值  </span>
-		<span class="pl-c"><span class="pl-c">//</span> i表示当前题单的索引，n-i-1表示当前题单后面的题单数量  </span>
+		<span class="pl-c"><span class="pl-c">//</span> 对于当前题单i，计算其前面和后面的题单数量中的较大值</span>
+		<span class="pl-c"><span class="pl-c">//</span> i表示当前题单的索引，n-i-1表示当前题单后面的题单数量</span>
 		<span class="pl-k">int</span> x = <span class="pl-c1">max</span>(i, n - i - <span class="pl-c1">1</span>);
-		<span class="pl-c"><span class="pl-c">//</span> 1. 被清空后递增到n后又递减回来  </span>
-		<span class="pl-c"><span class="pl-c">//</span> 2. 被清空后递减到1后又递增回来  </span>
-		<span class="pl-c"><span class="pl-c">//</span> 在这两种情况下，最大数量都是前后题单数量的两倍  </span>
+		<span class="pl-c"><span class="pl-c">//</span> 1. 被清空后递增到n后又递减回来</span>
+		<span class="pl-c"><span class="pl-c">//</span> 2. 被清空后递减到1后又递增回来</span>
+		<span class="pl-c"><span class="pl-c">//</span> 在这两种情况下，最大数量都是前后题单数量的两倍</span>
 		cout &lt;&lt; x * <span class="pl-c1">2</span> &lt;&lt; endl;
 	}
-	<span class="pl-k">return</span> <span class="pl-c1">0</span>; 
+	<span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }
 
 </pre></div>
 <h2>E</h2>
-<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span>橙子蛋糕 </span>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-c"><span class="pl-c">//</span>橙子蛋糕</span>
 #<span class="pl-k">include</span><span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
 <span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
 
 <span class="pl-k">int</span> <span class="pl-en">main</span>()
 {
     <span class="pl-k">long</span> <span class="pl-k">long</span> n, k;
-    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%lld%lld<span class="pl-pds">"</span></span>,&amp;n,&amp;k); 
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%lld%lld<span class="pl-pds">"</span></span>,&amp;n,&amp;k);
 
     <span class="pl-c"><span class="pl-c">//</span> 推断易得 k 与 n - k 的结果一样，故要判断补数n - k</span>
     <span class="pl-c"><span class="pl-c">//</span> 如果 k 大于 n 的一半，则计算 k 的补数，并赋值回 k</span>
     <span class="pl-k">if</span> (k &gt; n / <span class="pl-c1">2</span>)
         k = n - k; <span class="pl-c"><span class="pl-c">//</span> 选择较小的 k 可以简化后续计算</span>
-        
+
     <span class="pl-c"><span class="pl-c">//</span> 如果 k 等于 n 减 k，即刚好是对角，就可以直接输出 n</span>
     <span class="pl-k">if</span> (k == n - k)
-        <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%lld<span class="pl-pds">"</span></span>,n); 
+        <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%lld<span class="pl-pds">"</span></span>,n);
     <span class="pl-k">else</span>
         <span class="pl-c"><span class="pl-c">//</span> 正常的选取情况就是 n*k + 1</span>
-        <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%lld<span class="pl-pds">"</span></span>,n * k + <span class="pl-c1">1</span>); 
+        <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%lld<span class="pl-pds">"</span></span>,n * k + <span class="pl-c1">1</span>);
 
     <span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }</pre></div>
@@ -401,46 +397,46 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 	<span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }</pre></div>
 <h2>I</h2>
-<p>对于唐嘉富来说，最优的策略是对数组中最大的x个元素取反。因此，为了最小化唐嘉富造成的损害，孙洁龙应该总是移除一些最大的元素。<br>
-为了解决这个问题，我们可以对数组进行排序，并遍历i（0≤i≤k），其中i是孙洁龙移除的元素数量。<br>
-对于每个i，我们知道孙洁龙将移除数组中最大的i个元素，然后唐嘉富会对剩下的x个最大元素取反。<br>
-因此，我们可以利用前缀和快速计算出最终的和。由于排序的存在，时间复杂度为O(nlogn)。</p>
-<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>bits/stdc++.h<span class="pl-pds">&gt;</span></span> 
-<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span> 
+<p>对于唐嘉富来说，最优的策略是对数组中最大的 x 个元素取反。因此，为了最小化唐嘉富造成的损害，孙洁龙应该总是移除一些最大的元素。<br>
+为了解决这个问题，我们可以对数组进行排序，并遍历 i（0≤i≤k），其中 i 是孙洁龙移除的元素数量。<br>
+对于每个 i，我们知道孙洁龙将移除数组中最大的 i 个元素，然后唐嘉富会对剩下的 x 个最大元素取反。<br>
+因此，我们可以利用前缀和快速计算出最终的和。由于排序的存在，时间复杂度为 O(nlogn)。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>bits/stdc++.h<span class="pl-pds">&gt;</span></span>
+<span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
 <span class="pl-k">int</span> A[<span class="pl-c1">2000010</span>];
 <span class="pl-k">void</span> <span class="pl-en">solve</span>() {
-	<span class="pl-k">int</span> n, k, x; 
-	cin &gt;&gt; n &gt;&gt; k &gt;&gt; x; 
-	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++) 
+	<span class="pl-k">int</span> n, k, x;
+	cin &gt;&gt; n &gt;&gt; k &gt;&gt; x;
+	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++)
 		cin &gt;&gt; A[i];
 	<span class="pl-c1">sort</span>(A + <span class="pl-c1">1</span>, A + n + <span class="pl-c1">1</span>, greater&lt;<span class="pl-k">int</span>&gt;()); <span class="pl-c"><span class="pl-c">//</span> 这里使用了C++的排序函数sort，C语言可使用qsort函数或者手搓快速排序。</span>
-	
+
 	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++)
-		A[i] += A[i - <span class="pl-c1">1</span>];<span class="pl-c"><span class="pl-c">//</span> 计算前缀和，A[i]现在表示前i个元素的和 </span>
-		
-	<span class="pl-k">int</span> ans = -<span class="pl-c1">1e9</span>; <span class="pl-c"><span class="pl-c">//</span> 初始化答案为一个非常小的数（负无穷大的近似值） </span>
-	<span class="pl-c"><span class="pl-c">//</span> 遍历孙洁龙可能移除的元素数量 i（ 0 到 k ） </span>
+		A[i] += A[i - <span class="pl-c1">1</span>];<span class="pl-c"><span class="pl-c">//</span> 计算前缀和，A[i]现在表示前i个元素的和</span>
+
+	<span class="pl-k">int</span> ans = -<span class="pl-c1">1e9</span>; <span class="pl-c"><span class="pl-c">//</span> 初始化答案为一个非常小的数（负无穷大的近似值）</span>
+	<span class="pl-c"><span class="pl-c">//</span> 遍历孙洁龙可能移除的元素数量 i（ 0 到 k ）</span>
 	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt;= k; i++)
 		<span class="pl-c"><span class="pl-c">//</span> 更新答案，取当前答案和（ A[n]（总和）- 2 * A[min(i + x, n)]（</span>
-		<span class="pl-c"><span class="pl-c">//</span>移除i个后唐嘉富取反x个的和的两倍，因为取反相当于减去两倍）+ A[i]（孙洁龙移除i个的和））的较大值 </span>
+		<span class="pl-c"><span class="pl-c">//</span>移除i个后唐嘉富取反x个的和的两倍，因为取反相当于减去两倍）+ A[i]（孙洁龙移除i个的和））的较大值</span>
 		ans = <span class="pl-c1">max</span>(ans, A[n] - <span class="pl-c1">2</span> * A[<span class="pl-c1">min</span>(i + x, n)] + A[i]);
-	
+
     <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, ans);
 }
 <span class="pl-k">int</span> <span class="pl-en">main</span>() {
-	<span class="pl-k">int</span> tc; 
+	<span class="pl-k">int</span> tc;
     <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;tc);
 	<span class="pl-k">while</span> (tc--)
 		<span class="pl-c1">solve</span>();
 }</pre></div>
 <h2>J</h2>
 <p>通过画图易得：</p>
-<p><code class="notranslate">1  x  n</code> 答案就是 n，m中得较大者</p>
+<p><code class="notranslate">1  x  n</code> 答案就是 n，m 中得较大者</p>
 <p><code class="notranslate">2  x  n</code>分三种情况：</p>
 <ul>
-<li>第一种即 m 可以被2整除但不可以被4整除，那么最优方案即 <code class="notranslate">n + m</code><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5c1b5619606c824a5bb01d5ef5383fbd39fc962fe7a9a55ec25052b6f30e73af/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379732532306d6f6434312e706e67"><img src="https://camo.githubusercontent.com/5c1b5619606c824a5bb01d5ef5383fbd39fc962fe7a9a55ec25052b6f30e73af/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379732532306d6f6434312e706e67" alt="" data-canonical-src="https://gitee.com/wellme/photo/raw/master/data/casys%20mod41.png" style="max-width: 100%;"></a></li>
-<li>第二种即 m 即可被2整除又可被4整除，最优方案即放满其中一排即 <code class="notranslate">max(n, m)</code><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f517ec53e291c83bd5e9e827d16f2a816251b3f44ac3c41b30f77e569a8454fc/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379736d6f6434312e706e67"><img src="https://camo.githubusercontent.com/f517ec53e291c83bd5e9e827d16f2a816251b3f44ac3c41b30f77e569a8454fc/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379736d6f6434312e706e67" alt="" data-canonical-src="https://gitee.com/wellme/photo/raw/master/data/casysmod41.png" style="max-width: 100%;"></a></li>
-<li>第三种即m为奇数，最优方案为<code class="notranslate">max(n, m) + 1</code><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7d39dd52fbbc16fc5fc3f37d3c04318fe53f6d714b85102a7f6574c588e50b3f/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f515132303234313130332d3230343133392e706e67"><img src="https://camo.githubusercontent.com/7d39dd52fbbc16fc5fc3f37d3c04318fe53f6d714b85102a7f6574c588e50b3f/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f515132303234313130332d3230343133392e706e67" alt="" data-canonical-src="https://gitee.com/wellme/photo/raw/master/data/QQ20241103-204139.png" style="max-width: 100%;"></a></li>
+<li>第一种即 m 可以被 2 整除但不可以被 4 整除，那么最优方案即 <code class="notranslate">n + m</code><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5c1b5619606c824a5bb01d5ef5383fbd39fc962fe7a9a55ec25052b6f30e73af/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379732532306d6f6434312e706e67"><img src="https://camo.githubusercontent.com/5c1b5619606c824a5bb01d5ef5383fbd39fc962fe7a9a55ec25052b6f30e73af/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379732532306d6f6434312e706e67" alt="" data-canonical-src="https://gitee.com/wellme/photo/raw/master/data/casys%20mod41.png" style="max-width: 100%;"></a></li>
+<li>第二种即 m 即可被 2 整除又可被 4 整除，最优方案即放满其中一排即 <code class="notranslate">max(n, m)</code><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f517ec53e291c83bd5e9e827d16f2a816251b3f44ac3c41b30f77e569a8454fc/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379736d6f6434312e706e67"><img src="https://camo.githubusercontent.com/f517ec53e291c83bd5e9e827d16f2a816251b3f44ac3c41b30f77e569a8454fc/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f63617379736d6f6434312e706e67" alt="" data-canonical-src="https://gitee.com/wellme/photo/raw/master/data/casysmod41.png" style="max-width: 100%;"></a></li>
+<li>第三种即 m 为奇数，最优方案为<code class="notranslate">max(n, m) + 1</code><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7d39dd52fbbc16fc5fc3f37d3c04318fe53f6d714b85102a7f6574c588e50b3f/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f515132303234313130332d3230343133392e706e67"><img src="https://camo.githubusercontent.com/7d39dd52fbbc16fc5fc3f37d3c04318fe53f6d714b85102a7f6574c588e50b3f/68747470733a2f2f67697465652e636f6d2f77656c6c6d652f70686f746f2f7261772f6d61737465722f646174612f515132303234313130332d3230343133392e706e67" alt="" data-canonical-src="https://gitee.com/wellme/photo/raw/master/data/QQ20241103-204139.png" style="max-width: 100%;"></a></li>
 </ul>
 <p>其他情况易得数量为 <code class="notranslate">(n x m + 1) / 2</code></p>
 <div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">void</span> <span class="pl-en">solve</span>() {
@@ -451,18 +447,18 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <span class="pl-k">else</span> <span class="pl-k">if</span> (n == <span class="pl-c1">2</span> || m == <span class="pl-c1">2</span>) {
         <span class="pl-k">if</span> (n == <span class="pl-c1">2</span> &amp;&amp; m % <span class="pl-c1">2</span> == <span class="pl-c1">0</span> &amp;&amp; m % <span class="pl-c1">4</span> != <span class="pl-c1">0</span>)
             <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, n + m);
-        
+
         <span class="pl-k">else</span> <span class="pl-k">if</span> (m == <span class="pl-c1">2</span> &amp;&amp; n % <span class="pl-c1">2</span> == <span class="pl-c1">0</span> &amp;&amp; n % <span class="pl-c1">4</span> != <span class="pl-c1">0</span>)
             <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, n + m);
-        
+
         <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-c1">max</span>(n, m) % <span class="pl-c1">2</span> == <span class="pl-c1">0</span>)
             <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, <span class="pl-c1">max</span>(n, m));
-        
+
         <span class="pl-k">else</span> <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, <span class="pl-c1">max</span>(n, m) + <span class="pl-c1">1</span>);
-    } 
+    }
     <span class="pl-k">else</span> <span class="pl-c1">printf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, (n * m + <span class="pl-c1">1</span>) / <span class="pl-c1">2</span>);
 }
- 
+
 <span class="pl-k">int</span> <span class="pl-en">main</span>() {
     <span class="pl-k">int</span> t = <span class="pl-c1">1</span>;
     <span class="pl-k">while</span> (t--)
@@ -476,7 +472,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 再记录下这个学妹的结束时间，以此类推，最后输出总次数就可以了。<br>
 （因为将结束时间排序，所以只要确定开始时间没有冲突，那整段时间就不会又任何冲突）</p>
 <div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span><span class="pl-s"><span class="pl-pds">&lt;</span>stdio.h<span class="pl-pds">&gt;</span></span>
-#<span class="pl-k">include</span><span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span><span class="pl-c"><span class="pl-c">//</span>算法库(包含sort函数) </span>
+#<span class="pl-k">include</span><span class="pl-s"><span class="pl-pds">&lt;</span>algorithm<span class="pl-pds">&gt;</span></span><span class="pl-c"><span class="pl-c">//</span>算法库(包含sort函数)</span>
 <span class="pl-k">struct</span> <span class="pl-en">st</span> { <span class="pl-c"><span class="pl-c">//</span>（定义一个结构体数组，分别储存开始时间和结束时间）</span>
 	<span class="pl-k">int</span> a;<span class="pl-c"><span class="pl-c">//</span>（开始时间）</span>
 	<span class="pl-k">int</span> b;<span class="pl-c"><span class="pl-c">//</span>（结束时间）</span>
@@ -491,7 +487,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 	<span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d<span class="pl-pds">"</span></span>, &amp;n);
 	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">1</span>; i &lt;= n; i++) {
 		<span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%d%d<span class="pl-pds">"</span></span>, &amp;x[i].<span class="pl-smi">a</span>, &amp;x[i].<span class="pl-smi">b</span>);
-	} 
+	}
 	<span class="pl-c1">std::sort</span>(x + <span class="pl-c1">1</span>, x + n + <span class="pl-c1">1</span>, cmp); <span class="pl-c"><span class="pl-c">//</span>（排序）亦可手写自定义关键字快速排序</span>
 	cnt = x[<span class="pl-c1">1</span>].<span class="pl-smi">b</span>; <span class="pl-c"><span class="pl-c">//</span>（无脑记录第一个值）</span>
 	<span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">2</span>; i &lt;= n; i++) {
@@ -512,7 +508,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <span class="pl-k">char</span> s[<span class="pl-c1">500010</span>];
 
 <span class="pl-k">void</span> <span class="pl-en">solve</span>() {
-    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%s<span class="pl-pds">"</span></span>, s); 
+    <span class="pl-c1">scanf</span>(<span class="pl-s"><span class="pl-pds">"</span>%s<span class="pl-pds">"</span></span>, s);
     <span class="pl-k">int</span> f = <span class="pl-c1">0</span>;
     <span class="pl-k">int</span> i;
     <span class="pl-k">char</span> a[<span class="pl-c1">7</span>];
@@ -550,14 +546,14 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }</pre></div>
 <h2>M</h2>
-<p>能最多把k个0变成1的话，并且要求最多连续1的长度，那我们就可以直接遍历这<br>
+<p>能最多把 k 个 0 变成 1 的话，并且要求最多连续 1 的长度，那我们就可以直接遍历这<br>
 个数组，找到符合题目条件的长度，然后一直取到最大值即可，如果暴力遍历的<br>
-话肯定是会超时的，n最大是<code class="notranslate">1e5</code>，k最大是<code class="notranslate">1e5</code>，O（n * k）的复杂度是不行的，<br>
-本题可以先进行前缀和再采取双指针的解决方案复杂度为O（n）。<br>
-因为数组中只有0或1，因此前缀和的意思是方便找出区间的1的总个数，在遍历<br>
+话肯定是会超时的，n 最大是<code class="notranslate">1e5</code>，k 最大是<code class="notranslate">1e5</code>，O（n * k）的复杂度是不行的，<br>
+本题可以先进行前缀和再采取双指针的解决方案复杂度为 O（n）。<br>
+因为数组中只有 0 或 1，因此前缀和的意思是方便找出区间的 1 的总个数，在遍历<br>
 的时候，判断条件必须是 $ (s[r] - s[l - 1] + k &gt;= r - l + 1 ) $ ，<code class="notranslate">r</code>指针才会<br>
-往右加，不然就算l指针往右加。这个判断是意思是[l，r]区间的1的个数加上可<br>
-以把0变成1的个数，要大于这个区间长度，因为这个k是最多，所以可能会超<br>
+往右加，不然就算 l 指针往右加。这个判断是意思是[l，r]区间的 1 的个数加上可<br>
+以把 0 变成 1 的个数，要大于这个区间长度，因为这个 k 是最多，所以可能会超<br>
 出.</p>
 <div class="highlight highlight-source-c++"><pre class="notranslate">#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
 <span class="pl-k">using</span> <span class="pl-k">namespace</span> <span class="pl-en">std</span><span class="pl-k">;</span>
