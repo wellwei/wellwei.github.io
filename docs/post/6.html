@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://gitee.com/wellme/photo/raw/master/data/avatar.3yeeq64kqg.webp"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="## C++实现红黑树（插入、查找、删除）
+
+### 红黑树性质
+
+- **所有节点都是红或黑色**
+- **根节点是黑色**
+- **每个叶子节点（NIL节点，或NULL）都是黑色**
+- **红色节点的两个子节点都是黑色**（不会出现相邻的两个红色节点）。">
+<meta property="og:title" content="C++实现红黑树（插入、查找、删除）">
+<meta property="og:description" content="## C++实现红黑树（插入、查找、删除）
+
+### 红黑树性质
+
+- **所有节点都是红或黑色**
+- **根节点是黑色**
+- **每个叶子节点（NIL节点，或NULL）都是黑色**
+- **红色节点的两个子节点都是黑色**（不会出现相邻的两个红色节点）。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://wellwei.github.io/post/6.html">
+<meta property="og:image" content="https://gitee.com/wellme/photo/raw/master/data/avatar.3yeeq64kqg.webp">
+<title>C++实现红黑树（插入、查找、删除）</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">C++实现红黑树（插入、查找、删除）</h1>
+<div class="title-right">
+    <a href="https://wellwei.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/wellwei/wellwei.github.io/issues/6" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h2>C++实现红黑树（插入、查找、删除）</h2>
+<h3>红黑树性质</h3>
+<ul>
+<li><strong>所有节点都是红或黑色</strong></li>
+<li><strong>根节点是黑色</strong></li>
+<li><strong>每个叶子节点（NIL节点，或NULL）都是黑色</strong></li>
+<li><strong>红色节点的两个子节点都是黑色</strong>（不会出现相邻的两个红色节点）。不红红</li>
+<li><strong>对于每个节点，从该节点到其所有后代叶子节点的简单路径上，包含相同数量的黑色节点</strong>。黑路同</li>
+</ul>
+<p>以上特性保证了<strong>最长路径不会超过最短路径的两倍</strong>。保证了树的平衡性，由此插入和删除操作的复杂度为<strong>O(log n)</strong>。</p>
+<blockquote>
+<p>本文建议搭配该<a href="https://www.cs.usfca.edu/~galles/visualization/RedBlack.html" rel="nofollow">网页</a>演示理解</p>
+</blockquote>
+<h3>定义结点结构</h3>
+<p>首先定义红黑树的节点结构。每个节点包含数据、指向父节点和左右子节点的指针，以及一个表示节点颜色的属性（红色或黑色）。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">struct</span> <span class="pl-en">Node</span> {
+    T data;
+    Node&lt;T&gt; *parent, *left, *right;
+    <span class="pl-k">bool</span> isRed;
+    
+    <span class="pl-en">Node</span>(<span class="pl-k">const</span> T&amp; data) : data(data), parent(<span class="pl-c1">nullptr</span>), left(<span class="pl-c1">nullptr</span>), right(<span class="pl-c1">nullptr</span>), isRed(<span class="pl-c1">true</span>) {}
+};</pre></div>
+<p>在这个结构体中：</p>
+<ul>
+<li><code class="notranslate">data</code>：存储节点的数据。我们使用了模板 <code class="notranslate">typename T</code>，使得红黑树可以存储不同类型的数据。</li>
+<li><code class="notranslate">parent</code>：指向父节点的指针。</li>
+<li><code class="notranslate">left</code>：指向左子节点的指针。</li>
+<li><code class="notranslate">right</code>：指向右子节点的指针。</li>
+<li><code class="notranslate">isRed</code>：表示节点的颜色，<code class="notranslate">true</code>为红色，<code class="notranslate">false</code>为黑色。新插入的节点通常被染成红色。</li>
+</ul>
+<h3>定义红黑树类</h3>
+<p>定义红黑树类，包含根节点、NIL节点和一些基本操作。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">class</span> <span class="pl-en">RBTree</span> {
+<span class="pl-k">private:</span>
+	Node&lt;T&gt; *root;
+	Node&lt;T&gt; *nil;
+
+<span class="pl-k">public:</span>
+	<span class="pl-en">RBTree</span>() {
+		nil = <span class="pl-k">new</span> Node&lt;T&gt;(<span class="pl-c1">0</span>);
+		nil-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+		nil-&gt;<span class="pl-smi">parent</span> = nil-&gt;<span class="pl-smi">left</span> = nil-&gt;<span class="pl-smi">right</span> = <span class="pl-c1">nullptr</span>;
+		root = nil;
+	}
+
+	<span class="pl-c"><span class="pl-c">//</span> 插入</span>
+	<span class="pl-k">void</span> <span class="pl-en">insert</span>(<span class="pl-k">const</span> T&amp;);
+
+	<span class="pl-c"><span class="pl-c">//</span> 删除</span>
+	<span class="pl-k">void</span> <span class="pl-en">erase</span>(<span class="pl-k">const</span> T&amp;);
+
+	<span class="pl-c"><span class="pl-c">//</span> 查找</span>
+	Node&lt;T&gt;* <span class="pl-en">find</span>(<span class="pl-k">const</span> T&amp;);
+
+	<span class="pl-c"><span class="pl-c">//</span> 左旋</span>
+	<span class="pl-k">void</span> <span class="pl-en">rotateLeft</span>(Node&lt;T&gt;*);
+
+	<span class="pl-c"><span class="pl-c">//</span> 右旋</span>
+	<span class="pl-k">void</span> <span class="pl-en">rotateRight</span>(Node&lt;T&gt;*);
+
+	<span class="pl-c"><span class="pl-c">//</span> 插入后修复红黑树性质</span>
+	<span class="pl-k">void</span> <span class="pl-en">insertFixUp</span>(Node&lt;T&gt;*);
+
+	<span class="pl-c"><span class="pl-c">//</span> 删除后修复红黑树性质</span>
+	<span class="pl-k">void</span> <span class="pl-en">eraseFixUp</span>(Node&lt;T&gt;*);
+
+	<span class="pl-c"><span class="pl-c">//</span> 查找最小节点</span>
+	Node&lt;T&gt;* <span class="pl-en">findMin</span>(Node&lt;T&gt;*);
+
+	<span class="pl-c"><span class="pl-c">//</span> 查找最大节点</span>
+	Node&lt;T&gt;* <span class="pl-en">findMax</span>(Node&lt;T&gt;*);
+
+	<span class="pl-c"><span class="pl-c">//</span> 查找前驱</span>
+	Node&lt;T&gt;* <span class="pl-en">predecessor</span>(Node&lt;T&gt;*);
+
+	<span class="pl-c"><span class="pl-c">//</span> 查找后继</span>
+	Node&lt;T&gt;* <span class="pl-en">successor</span>(Node&lt;T&gt;*);
+    
+    <span class="pl-c"><span class="pl-c">//</span> 替换子树</span>
+	<span class="pl-k">void</span> <span class="pl-en">transplant</span>(Node&lt;T&gt; *u, Node&lt;T&gt; *v);
+};</pre></div>
+<p>声明一些核心操作以及一些用于维护红黑树性质的辅助函数。</p>
+<p><code class="notranslate">nil</code>节点为哨兵节点，用来代替<code class="notranslate">nullptr</code>，防止空指针操作异常。</p>
+<h3>实现查找操作</h3>
+<p>红黑树的查找操作与一般的二叉搜索树的查找相同。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+Node&lt;T&gt; *RBTree&lt;T&gt;::find(<span class="pl-k">const</span> T &amp;data) <span class="pl-k">const</span> {
+	Node&lt;T&gt; *cur = root;
+	<span class="pl-k">while</span> (cur != nil) {
+		<span class="pl-k">if</span> (cur-&gt;<span class="pl-smi">data</span> == data)
+			<span class="pl-k">return</span> cur;
+		<span class="pl-k">else</span> <span class="pl-k">if</span> (cur-&gt;<span class="pl-smi">data</span> &lt; data)
+			cur = cur-&gt;<span class="pl-smi">right</span>;
+		<span class="pl-k">else</span>
+			cur = cur-&gt;<span class="pl-smi">left</span>;
+	}
+	<span class="pl-k">return</span> <span class="pl-c1">nullptr</span>;
+}</pre></div>
+<h3>实现左旋和右旋</h3>
+<p>旋转操作是红黑树保持平衡的关键，与平衡二叉树（AVL）的旋转操作类似。</p>
+<p><strong>左旋</strong>：原根右子节点成为新根，如果新根存在左子节点，那么将其作为原根的右子节点，原根变为新根的左子节点。</p>
+<p><strong>右旋</strong>：与左旋相反，原根左子节点成为新根，如果新根存在右子节点，那么将其作为原根的左子节点，原根变为新根的右子节点。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::rotateLeft(Node&lt;T&gt; *node) {
+	Node&lt;T&gt; *newNode = node-&gt;<span class="pl-smi">right</span>;	<span class="pl-c"><span class="pl-c">//</span> 原根的右孩子成为新根</span>
+	node-&gt;<span class="pl-smi">right</span> = newNode-&gt;<span class="pl-smi">left</span>;	<span class="pl-c"><span class="pl-c">//</span> 新根的左孩子变为旧根的右孩子</span>
+	<span class="pl-k">if</span> (newNode-&gt;<span class="pl-smi">left</span> != nil)
+		newNode-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">parent</span> = node;	<span class="pl-c"><span class="pl-c">//</span> 更新左孩子的父节点为旧根</span>
+	newNode-&gt;<span class="pl-smi">parent</span> = node-&gt;<span class="pl-smi">parent</span>;	<span class="pl-c"><span class="pl-c">//</span> 更新新根的父节点为旧根的父节点</span>
+	<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">parent</span> == nil)
+		root = newNode;	<span class="pl-c"><span class="pl-c">//</span> 如果旧根是根节点，更新根节点为新根</span>
+	<span class="pl-k">else</span> <span class="pl-k">if</span> (node == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>)
+		node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span> = newNode;	<span class="pl-c"><span class="pl-c">//</span> 如果旧根是父节点的左孩子，更新父节点的左孩子为新根</span>
+	<span class="pl-k">else</span>
+		node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span> = newNode;	<span class="pl-c"><span class="pl-c">//</span> 如果旧根是父节点的右孩子，更新父节点的右孩子为新根</span>
+	newNode-&gt;<span class="pl-smi">left</span> = node;	<span class="pl-c"><span class="pl-c">//</span> 旧根变为新根的左孩子</span>
+	node-&gt;<span class="pl-smi">parent</span> = newNode;	<span class="pl-c"><span class="pl-c">//</span> 旧根的父节点变为新根</span>
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::rotateRight(Node&lt;T&gt; *node) {
+	Node&lt;T&gt; *newNode = node-&gt;<span class="pl-smi">left</span>;
+	node-&gt;<span class="pl-smi">left</span> = newNode-&gt;<span class="pl-smi">right</span>;
+	<span class="pl-k">if</span> (newNode-&gt;<span class="pl-smi">right</span> != nil)
+		newNode-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">parent</span> = node;
+	newNode-&gt;<span class="pl-smi">parent</span> = node-&gt;<span class="pl-smi">parent</span>;
+	<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">parent</span> == nil)
+		root = newNode;
+	<span class="pl-k">else</span> <span class="pl-k">if</span> (node == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>)
+		node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span> = newNode;
+	<span class="pl-k">else</span>
+		node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span> = newNode;
+	newNode-&gt;<span class="pl-smi">right</span> = node;
+	node-&gt;<span class="pl-smi">parent</span> = newNode;
+}</pre></div>
+<h3>实现插入操作</h3>
+<p>红黑树的插入操作是标准的二叉搜索树插入，然后通过<code class="notranslate">insertFixUp</code>函数维护红黑树的性质。每个新插入的节点都是红色。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::insert(<span class="pl-k">const</span> T &amp;data) {
+	Node&lt;T&gt; *newNode = <span class="pl-k">new</span> Node&lt;T&gt;(data);
+	Node&lt;T&gt; *cur = root, *pre = nil;
+	<span class="pl-k">while</span> (cur != nil) {
+		pre = cur;
+		<span class="pl-k">if</span> (cur-&gt;<span class="pl-smi">data</span> == data) {	<span class="pl-c"><span class="pl-c">//</span> 重复数据不插入</span>
+			<span class="pl-k">delete</span> newNode;
+			<span class="pl-k">return</span>;
+		} <span class="pl-k">else</span> <span class="pl-k">if</span> (cur-&gt;<span class="pl-smi">data</span> &lt; data)
+			cur = cur-&gt;<span class="pl-smi">right</span>;
+		<span class="pl-k">else</span>
+			cur = cur-&gt;<span class="pl-smi">left</span>;
+	}
+	newNode-&gt;<span class="pl-smi">parent</span> = pre;
+
+	<span class="pl-k">if</span> (pre == nil)	<span class="pl-c"><span class="pl-c">//</span> 空树</span>
+		root = newNode;
+	<span class="pl-k">else</span> <span class="pl-k">if</span> (pre-&gt;<span class="pl-smi">data</span> &lt; data)
+		pre-&gt;<span class="pl-smi">right</span> = newNode;
+	<span class="pl-k">else</span>
+		pre-&gt;<span class="pl-smi">left</span> = newNode;
+
+	newNode-&gt;<span class="pl-smi">left</span> = nil;
+	newNode-&gt;<span class="pl-smi">right</span> = nil;
+	newNode-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+	
+	<span class="pl-c1">insertFixUp</span>(newNode);
+}</pre></div>
+<h3>实现插入后的修复操作 <code class="notranslate">insertFixUp</code></h3>
+<p>插入操作如果破坏了红黑树的性质，那么就要按照以下<strong>变色</strong>和<strong>旋转</strong>规则修复：</p>
+<ol>
+<li>
+<h5>当前节点（红色）的父节点是红色且当前节点的叔叔节点也是红色</h5>
+<ol>
+<li><strong>把父节点设置为黑色</strong></li>
+<li><strong>把叔叔节点也设置为黑色</strong></li>
+<li><strong>把祖父节点设置为红色</strong></li>
+<li><strong>上移至祖父节点继续修复</strong></li>
+</ol>
+</li>
+<li>
+<h5>当前节点的父节点是红色，叔叔节点不存在或叔叔节点为黑色，且父节点是祖父节点的左子节点</h5>
+<ul>
+<li><strong>LL型</strong>（当前节点是父节点的左子节点）：<strong>父节点变黑，祖父节点变红，右旋祖父节点</strong></li>
+<li><strong>LR</strong>型（当前节点是父节点的右子节点）：<strong>左旋父节点变成LL型</strong></li>
+</ul>
+</li>
+<li>
+<p><strong>当前节点的父节点是红色，叔叔节点不存在或叔叔节点为黑色，且父节点是祖父节点的右子节点</strong></p>
+<ul>
+<li><strong>RR型</strong>（当前节点是父节点的右子节点）：<strong>父节点变黑，祖父节点变红，左旋祖父节点</strong></li>
+<li><strong>RL型</strong>（当前节点是父节点的左子节点）：<strong>右旋父节点变成RR型</strong></li>
+</ul>
+</li>
+</ol>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::insertFixUp(Node&lt;T&gt; *node) {
+	<span class="pl-k">while</span> (node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span>) {	<span class="pl-c"><span class="pl-c">//</span> 当前节点与父节点都是红，违反 “不红红”。</span>
+		<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">parent</span> == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>) { <span class="pl-c"><span class="pl-c">//</span> 父节点是祖父节点的左子节点</span>
+			Node&lt;T&gt; *uncle = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span>;
+			<span class="pl-k">if</span> (uncle-&gt;<span class="pl-smi">isRed</span>) { <span class="pl-c"><span class="pl-c">//</span> 叔叔节点是红色</span>
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				uncle-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				node = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>; <span class="pl-c"><span class="pl-c">//</span> 上移至祖父节点继续修复</span>
+			} <span class="pl-k">else</span> {
+				<span class="pl-k">if</span> (node == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span>) { <span class="pl-c"><span class="pl-c">//</span> LR型，先左旋转为LL型</span>
+					node = node-&gt;<span class="pl-smi">parent</span>;
+					<span class="pl-c1">rotateLeft</span>(node);
+				}
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>; <span class="pl-c"><span class="pl-c">//</span> LL型，父节点变黑、祖父节点变红，右旋转祖父节点</span>
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				<span class="pl-c1">rotateRight</span>(node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>);
+			}
+		} <span class="pl-k">else</span> { <span class="pl-c"><span class="pl-c">//</span> 父节点是祖父节点的右子节点</span>
+			Node&lt;T&gt; *uncle = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>;
+			<span class="pl-k">if</span> (uncle-&gt;<span class="pl-smi">isRed</span>) {
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				uncle-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				node = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>;
+			} <span class="pl-k">else</span> {
+				<span class="pl-k">if</span> (node == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>) { <span class="pl-c"><span class="pl-c">//</span> RL型，先右旋转为RR型</span>
+					node = node-&gt;<span class="pl-smi">parent</span>;
+					<span class="pl-c1">rotateRight</span>(node);
+				}
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>; <span class="pl-c"><span class="pl-c">//</span> RR型，父节点变黑、祖父节点变红，左旋转祖父节点</span>
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				<span class="pl-c1">rotateLeft</span>(node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>);
+			}
+		}
+	}
+
+	root-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>; <span class="pl-c"><span class="pl-c">//</span> 根节点始终为黑</span>
+}</pre></div>
+<h3>实现删除操作的辅助函数*</h3>
+<p>实现查找最小、最大、后继、前驱节点以及替换子树函数。这些辅助函数再删除操作中会用到。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+Node&lt;T&gt; *RBTree&lt;T&gt;::findMin(Node&lt;T&gt; *node) <span class="pl-k">const</span> {
+	<span class="pl-k">while</span> (node != nil &amp;&amp; node-&gt;<span class="pl-smi">left</span> != nil) {
+		node = node-&gt;<span class="pl-smi">left</span>;
+	}
+	<span class="pl-k">return</span> node;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+Node&lt;T&gt; *RBTree&lt;T&gt;::findMax(Node&lt;T&gt; *node) <span class="pl-k">const</span> {
+	<span class="pl-k">while</span> (node != nil &amp;&amp; node-&gt;<span class="pl-smi">right</span> != nil) {
+		node = node-&gt;<span class="pl-smi">right</span>;
+	}
+	<span class="pl-k">return</span> node;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+Node&lt;T&gt; *RBTree&lt;T&gt;::successor(Node&lt;T&gt; *node) <span class="pl-k">const</span> {
+	<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">right</span> != nil) {
+		<span class="pl-k">return</span> <span class="pl-c1">minimum</span>(node-&gt;<span class="pl-smi">right</span>);
+	}
+	Node&lt;T&gt; *y = node-&gt;<span class="pl-smi">parent</span>;
+	<span class="pl-k">while</span> (y != nil &amp;&amp; node == y-&gt;<span class="pl-smi">right</span>) {
+		node = y;
+		y = y-&gt;<span class="pl-smi">parent</span>;
+	}
+	<span class="pl-k">return</span> y;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+Node&lt;T&gt; *RBTree&lt;T&gt;::predecessor(Node&lt;T&gt; *node) <span class="pl-k">const</span> {
+	<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">left</span> != nil) {
+		<span class="pl-k">return</span> <span class="pl-c1">maximum</span>(node-&gt;<span class="pl-smi">left</span>);
+	}
+	Node&lt;T&gt; *y = node-&gt;<span class="pl-smi">parent</span>;
+	<span class="pl-k">while</span> (y != nil &amp;&amp; node == y-&gt;<span class="pl-smi">left</span>) {
+		node = y;
+		y = y-&gt;<span class="pl-smi">parent</span>;
+	}
+	<span class="pl-k">return</span> y;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::transplant(Node&lt;T&gt;* u, Node&lt;T&gt;* v) {
+    <span class="pl-k">if</span> (u-&gt;<span class="pl-smi">parent</span> == <span class="pl-c1">nullptr</span>) {
+        root = v;
+    } <span class="pl-k">else</span> <span class="pl-k">if</span> (u == u-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>) {
+        u-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span> = v;
+    } <span class="pl-k">else</span> {
+        u-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span> = v;
+    }
+    <span class="pl-k">if</span> (v != <span class="pl-c1">nullptr</span>) {
+        v-&gt;<span class="pl-smi">parent</span> = u-&gt;<span class="pl-smi">parent</span>;
+    }
+}
+</pre></div>
+<h3>实现删除操作</h3>
+<p>删除操作也需要先执行标准的二叉搜索树删除，然后通过 <code class="notranslate">deleteFixUp</code> 函数来维护红黑树的性质。</p>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::erase(<span class="pl-k">const</span> T &amp;data) {
+	Node&lt;T&gt; *node = <span class="pl-c1">find</span>(data);
+	<span class="pl-k">if</span> (node == <span class="pl-c1">nullptr</span>)
+		<span class="pl-k">return</span>;
+
+	Node&lt;T&gt; *x, *y = node;
+	<span class="pl-k">bool</span> yOriginalColor = y-&gt;<span class="pl-smi">isRed</span>;
+
+	<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">left</span> == nil) {	<span class="pl-c"><span class="pl-c">//</span> 左子树为空，用右子树替代</span>
+		x = node-&gt;<span class="pl-smi">right</span>;
+		<span class="pl-c1">transplant</span>(node, node-&gt;<span class="pl-smi">right</span>);
+	} <span class="pl-k">else</span> <span class="pl-k">if</span> (node-&gt;<span class="pl-smi">right</span> == nil) {	<span class="pl-c"><span class="pl-c">//</span> 右子树为空，用左子树替代</span>
+		x = node-&gt;<span class="pl-smi">left</span>;
+		<span class="pl-c1">transplant</span>(node, node-&gt;<span class="pl-smi">left</span>);
+	} <span class="pl-k">else</span> {	<span class="pl-c"><span class="pl-c">//</span> 左右子树均不为空，找到后继节点</span>
+		y = <span class="pl-c1">findMin</span>(node-&gt;<span class="pl-smi">right</span>);
+		yOriginalColor = y-&gt;<span class="pl-smi">isRed</span>;
+		x = y-&gt;<span class="pl-smi">right</span>;
+		<span class="pl-k">if</span> (y-&gt;<span class="pl-smi">parent</span> == node) {	<span class="pl-c"><span class="pl-c">//</span> 后继节点是待删除节点的右子节点，直接用右子节点替代</span>
+			<span class="pl-k">if</span> (x != nil)
+				x-&gt;<span class="pl-smi">parent</span> = y;
+		} <span class="pl-k">else</span> {	<span class="pl-c"><span class="pl-c">//</span> 用后继节点的右子节点替代后继节点</span>
+			<span class="pl-c1">transplant</span>(y, y-&gt;<span class="pl-smi">right</span>);
+			y-&gt;<span class="pl-smi">right</span> = node-&gt;<span class="pl-smi">right</span>;
+			y-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">parent</span> = y;
+		}
+		<span class="pl-c1">transplant</span>(node, y);	<span class="pl-c"><span class="pl-c">//</span> 用后继节点替代待删除节点</span>
+		y-&gt;<span class="pl-smi">left</span> = node-&gt;<span class="pl-smi">left</span>;
+		y-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">parent</span> = y;
+		y-&gt;<span class="pl-smi">isRed</span> = node-&gt;<span class="pl-smi">isRed</span>;
+	}
+	<span class="pl-k">if</span> (!yOriginalColor) {	<span class="pl-c"><span class="pl-c">//</span> 删除节点为黑色，修复红黑树性质</span>
+		<span class="pl-c1">eraseFixUp</span>(x);
+	}
+	<span class="pl-k">delete</span> node;
+}</pre></div>
+<h3>实现删除后的修复操作<code class="notranslate">eraseFixUp</code></h3>
+<p>如果删除后破坏了红黑树的性质，那么需要根据以下规则进行修复：</p>
+<ul>
+<li>当前节点是左子节点
+<ul>
+<li>兄弟节点是红色：父变红、兄变黑、左旋父节点，继续修复</li>
+<li>兄弟节点是黑色：
+<ul>
+<li>兄弟的两个子节点都是黑色：兄变红，上移继续修复</li>
+<li>兄弟节点至少有一个红色子节点：
+<ul>
+<li>RL型：兄弟节点的右子节点是黑色，兄弟节点变红，其左子节点变黑，右旋兄弟节点变成RR型</li>
+<li>RR型：父节点颜色给兄弟节点，父节点变黑，右子变黑，左旋父节点</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>当前节点是右子节点
+<ul>
+<li>兄弟节点是红色：父变红、兄变黑、右旋父节点，继续修复</li>
+<li>兄弟节点是黑色：
+<ul>
+<li>兄弟的两个子节点都是黑色：兄变红，上移继续修复</li>
+<li>兄弟至少有一个红色子节点：
+<ul>
+<li>LR型：兄弟节点的左子节点是黑色，兄弟节点变红，其右子节点变黑，左旋兄弟节点变成RR型</li>
+<li>LL型：父节点颜色给兄弟节点，父节点变黑，左子变黑，右旋父节点</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::eraseFixUp(Node&lt;T&gt; *node) {
+	<span class="pl-k">while</span> (node != root &amp;&amp; !node-&gt;<span class="pl-smi">isRed</span>) { <span class="pl-c"><span class="pl-c">//</span> 当前节点不是根节点且不是红色</span>
+		<span class="pl-k">if</span> (node == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>) {  <span class="pl-c"><span class="pl-c">//</span> 当前节点是左子节点</span>
+			Node&lt;T&gt; *bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span>;
+			<span class="pl-k">if</span> (bro-&gt;<span class="pl-smi">isRed</span>) { <span class="pl-c"><span class="pl-c">//</span> 兄弟节点是红色, 父节点变红，兄弟节点变黑，左旋父节点，继续修复</span>
+				bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				<span class="pl-c1">rotateLeft</span>(node-&gt;<span class="pl-smi">parent</span>);
+				bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span>;
+			}
+			<span class="pl-k">if</span> (!bro-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">isRed</span> &amp;&amp; !bro-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">isRed</span>) { <span class="pl-c"><span class="pl-c">//</span> 兄弟节点的两个子节点都是黑色，兄弟节点变红，上移继续修复</span>
+				bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				node = node-&gt;<span class="pl-smi">parent</span>;
+			} <span class="pl-k">else</span> { <span class="pl-c"><span class="pl-c">//</span> 兄弟节点至少有一个红色子节点</span>
+				<span class="pl-c"><span class="pl-c">//</span> 兄弟节点的右子节点是黑色，左子节点是红色，RL型，兄弟节点变红，其左子节点变黑，右旋兄弟节点变成RR型</span>
+				<span class="pl-k">if</span> (!bro-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">isRed</span>) {
+					bro-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+					bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+					<span class="pl-c1">rotateRight</span>(bro);
+					bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span>;
+				}
+				<span class="pl-c"><span class="pl-c">//</span> RR型，兄弟节点的右子节点是红色，父节点颜色给兄弟节点，父节点变黑，右子变黑，左旋父节点</span>
+				bro-&gt;<span class="pl-smi">isRed</span> = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				bro-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				<span class="pl-c1">rotateLeft</span>(node-&gt;<span class="pl-smi">parent</span>);
+				node = root;
+			}
+		} <span class="pl-k">else</span> {
+			Node&lt;T&gt; *bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>;
+			<span class="pl-k">if</span> (bro-&gt;<span class="pl-smi">isRed</span>) {
+				bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				<span class="pl-c1">rotateRight</span>(node-&gt;<span class="pl-smi">parent</span>);
+				bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>;
+			}
+			<span class="pl-k">if</span> (!bro-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">isRed</span> &amp;&amp; !bro-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">isRed</span>) {
+				bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				node = node-&gt;<span class="pl-smi">parent</span>;
+			} <span class="pl-k">else</span> {
+				<span class="pl-c"><span class="pl-c">//</span> LR型，兄弟节点的左子节点是黑色，兄弟节点变红，其右子节点变黑，左旋兄弟节点变成RR型</span>
+				<span class="pl-k">if</span> (!bro-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">isRed</span>) {
+					bro-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+					bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+					<span class="pl-c1">rotateLeft</span>(bro);
+					bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>;
+				}
+				<span class="pl-c"><span class="pl-c">//</span> RR型，兄弟节点的左子节点是红色，父节点颜色给兄弟节点，父节点变黑，左子变黑，右旋父节点</span>
+				bro-&gt;<span class="pl-smi">isRed</span> = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				bro-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				<span class="pl-c1">rotateRight</span>(node-&gt;<span class="pl-smi">parent</span>);
+				node = root;
+			}
+		}
+	}
+	node-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+}</pre></div>
+<h3>总结&amp;测试</h3>
+<div class="highlight highlight-source-c++"><pre class="notranslate"><span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">struct</span> <span class="pl-en">Node</span> {
+	T data;
+	Node&lt;T&gt; *parent, *left, *right;
+	<span class="pl-k">bool</span> isRed;
+
+	<span class="pl-en">Node</span>(<span class="pl-k">const</span> T &amp;data) : data(data), parent(<span class="pl-c1">nullptr</span>), left(<span class="pl-c1">nullptr</span>), right(<span class="pl-c1">nullptr</span>), isRed(<span class="pl-c1">true</span>) {}
+};
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">class</span> <span class="pl-en">RBTree</span> {
+<span class="pl-k">private:</span>
+	Node&lt;T&gt; *root;
+	Node&lt;T&gt; *nil;
+
+<span class="pl-k">public:</span>
+	<span class="pl-en">RBTree</span>() {
+		nil = <span class="pl-k">new</span> Node&lt;T&gt;(<span class="pl-c1">0</span>);
+		nil-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+		nil-&gt;<span class="pl-smi">parent</span> = nil-&gt;<span class="pl-smi">left</span> = nil-&gt;<span class="pl-smi">right</span> = <span class="pl-c1">nullptr</span>;
+		root = nil;
+	}
+
+	<span class="pl-c"><span class="pl-c">//</span> 插入</span>
+	<span class="pl-k">void</span> <span class="pl-en">insert</span>(<span class="pl-k">const</span> T &amp;);
+
+	<span class="pl-c"><span class="pl-c">//</span> 删除</span>
+	<span class="pl-k">void</span> <span class="pl-en">erase</span>(<span class="pl-k">const</span> T &amp;);
+
+	<span class="pl-c"><span class="pl-c">//</span> 查找</span>
+	Node&lt;T&gt; *<span class="pl-en">find</span>(<span class="pl-k">const</span> T &amp;) <span class="pl-k">const</span>;
+
+	<span class="pl-c"><span class="pl-c">//</span> 左旋</span>
+	<span class="pl-k">void</span> <span class="pl-en">rotateLeft</span>(Node&lt;T&gt; *);
+
+	<span class="pl-c"><span class="pl-c">//</span> 右旋</span>
+	<span class="pl-k">void</span> <span class="pl-en">rotateRight</span>(Node&lt;T&gt; *);
+
+	<span class="pl-c"><span class="pl-c">//</span> 插入后修复红黑树性质</span>
+	<span class="pl-k">void</span> <span class="pl-en">insertFixUp</span>(Node&lt;T&gt; *);
+
+	<span class="pl-c"><span class="pl-c">//</span> 删除后修复红黑树性质</span>
+	<span class="pl-k">void</span> <span class="pl-en">eraseFixUp</span>(Node&lt;T&gt; *);
+
+	<span class="pl-c"><span class="pl-c">//</span> 查找最小节点</span>
+	Node&lt;T&gt; *<span class="pl-en">findMin</span>(Node&lt;T&gt; *) <span class="pl-k">const</span>;
+
+	<span class="pl-c"><span class="pl-c">//</span> 查找最大节点</span>
+	Node&lt;T&gt; *<span class="pl-en">findMax</span>(Node&lt;T&gt; *) <span class="pl-k">const</span>;
+
+	<span class="pl-c"><span class="pl-c">//</span> 查找前驱</span>
+	Node&lt;T&gt; *<span class="pl-en">predecessor</span>(Node&lt;T&gt; *) <span class="pl-k">const</span>;
+
+	<span class="pl-k">void</span> <span class="pl-en">transplant</span>(Node&lt;T&gt; *u, Node&lt;T&gt; *v);
+
+	<span class="pl-c"><span class="pl-c">//</span> 查找后继</span>
+	Node&lt;T&gt; *<span class="pl-en">successor</span>(Node&lt;T&gt; *) <span class="pl-k">const</span>;
+};
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+Node&lt;T&gt; *RBTree&lt;T&gt;::find(<span class="pl-k">const</span> T &amp;data) <span class="pl-k">const</span> {
+	Node&lt;T&gt; *cur = root;
+	<span class="pl-k">while</span> (cur != nil) {
+		<span class="pl-k">if</span> (cur-&gt;<span class="pl-smi">data</span> == data)
+			<span class="pl-k">return</span> cur;
+		<span class="pl-k">else</span> <span class="pl-k">if</span> (cur-&gt;<span class="pl-smi">data</span> &lt; data)
+			cur = cur-&gt;<span class="pl-smi">right</span>;
+		<span class="pl-k">else</span>
+			cur = cur-&gt;<span class="pl-smi">left</span>;
+	}
+	<span class="pl-k">return</span> <span class="pl-c1">nullptr</span>;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::rotateLeft(Node&lt;T&gt; *node) {
+	Node&lt;T&gt; *newNode = node-&gt;<span class="pl-smi">right</span>; <span class="pl-c"><span class="pl-c">//</span> 原根的右孩子成为新根</span>
+	node-&gt;<span class="pl-smi">right</span> = newNode-&gt;<span class="pl-smi">left</span>;	<span class="pl-c"><span class="pl-c">//</span> 新根的左孩子变为旧根的右孩子</span>
+	<span class="pl-k">if</span> (newNode-&gt;<span class="pl-smi">left</span> != nil)
+		newNode-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">parent</span> = node; <span class="pl-c"><span class="pl-c">//</span> 更新左孩子的父节点为旧根</span>
+	newNode-&gt;<span class="pl-smi">parent</span> = node-&gt;<span class="pl-smi">parent</span>;	  <span class="pl-c"><span class="pl-c">//</span> 更新新根的父节点为旧根的父节点</span>
+	<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">parent</span> == nil)
+		root = newNode; <span class="pl-c"><span class="pl-c">//</span> 如果旧根是根节点，更新根节点为新根</span>
+	<span class="pl-k">else</span> <span class="pl-k">if</span> (node == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>)
+		node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span> = newNode; <span class="pl-c"><span class="pl-c">//</span> 如果旧根是父节点的左孩子，更新父节点的左孩子为新根</span>
+	<span class="pl-k">else</span>
+		node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span> = newNode; <span class="pl-c"><span class="pl-c">//</span> 如果旧根是父节点的右孩子，更新父节点的右孩子为新根</span>
+	newNode-&gt;<span class="pl-smi">left</span> = node;			   <span class="pl-c"><span class="pl-c">//</span> 旧根变为新根的左孩子</span>
+	node-&gt;<span class="pl-smi">parent</span> = newNode;			   <span class="pl-c"><span class="pl-c">//</span> 旧根的父节点变为新根</span>
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::rotateRight(Node&lt;T&gt; *node) {
+	Node&lt;T&gt; *newNode = node-&gt;<span class="pl-smi">left</span>;
+	node-&gt;<span class="pl-smi">left</span> = newNode-&gt;<span class="pl-smi">right</span>;
+	<span class="pl-k">if</span> (newNode-&gt;<span class="pl-smi">right</span> != nil)
+		newNode-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">parent</span> = node;
+	newNode-&gt;<span class="pl-smi">parent</span> = node-&gt;<span class="pl-smi">parent</span>;
+	<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">parent</span> == nil)
+		root = newNode;
+	<span class="pl-k">else</span> <span class="pl-k">if</span> (node == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>)
+		node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span> = newNode;
+	<span class="pl-k">else</span>
+		node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span> = newNode;
+	newNode-&gt;<span class="pl-smi">right</span> = node;
+	node-&gt;<span class="pl-smi">parent</span> = newNode;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::insert(<span class="pl-k">const</span> T &amp;data) {
+	Node&lt;T&gt; *newNode = <span class="pl-k">new</span> Node&lt;T&gt;(data);
+	Node&lt;T&gt; *cur = root, *pre = nil;
+	<span class="pl-k">while</span> (cur != nil) {
+		pre = cur;
+		<span class="pl-k">if</span> (cur-&gt;<span class="pl-smi">data</span> == data) { <span class="pl-c"><span class="pl-c">//</span> 重复数据不插入</span>
+			<span class="pl-k">delete</span> newNode;
+			<span class="pl-k">return</span>;
+		} <span class="pl-k">else</span> <span class="pl-k">if</span> (cur-&gt;<span class="pl-smi">data</span> &lt; data)
+			cur = cur-&gt;<span class="pl-smi">right</span>;
+		<span class="pl-k">else</span>
+			cur = cur-&gt;<span class="pl-smi">left</span>;
+	}
+	newNode-&gt;<span class="pl-smi">parent</span> = pre;
+
+	<span class="pl-k">if</span> (pre == nil) <span class="pl-c"><span class="pl-c">//</span> 空树</span>
+		root = newNode;
+	<span class="pl-k">else</span> <span class="pl-k">if</span> (pre-&gt;<span class="pl-smi">data</span> &lt; data)
+		pre-&gt;<span class="pl-smi">right</span> = newNode;
+	<span class="pl-k">else</span>
+		pre-&gt;<span class="pl-smi">left</span> = newNode;
+
+	newNode-&gt;<span class="pl-smi">left</span> = nil;
+	newNode-&gt;<span class="pl-smi">right</span> = nil;
+	newNode-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+
+	<span class="pl-c1">insertFixUp</span>(newNode);
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::insertFixUp(Node&lt;T&gt; *node) {
+	<span class="pl-k">while</span> (node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span>) {						  <span class="pl-c"><span class="pl-c">//</span> 当前节点与父节点都是红，违反 “不红红”。</span>
+		<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">parent</span> == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>) { <span class="pl-c"><span class="pl-c">//</span> 父节点是祖父节点的左子节点</span>
+			Node&lt;T&gt; *uncle = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span>;
+			<span class="pl-k">if</span> (uncle-&gt;<span class="pl-smi">isRed</span>) { <span class="pl-c"><span class="pl-c">//</span> 叔叔节点是红色</span>
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				uncle-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				node = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>; <span class="pl-c"><span class="pl-c">//</span> 上移至祖父节点继续修复</span>
+			} <span class="pl-k">else</span> {
+				<span class="pl-k">if</span> (node == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span>) { <span class="pl-c"><span class="pl-c">//</span> LR型，先左旋转为LL型</span>
+					node = node-&gt;<span class="pl-smi">parent</span>;
+					<span class="pl-c1">rotateLeft</span>(node);
+				}
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>; <span class="pl-c"><span class="pl-c">//</span> LL型，父节点变黑、祖父节点变红，右旋转祖父节点</span>
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				<span class="pl-c1">rotateRight</span>(node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>);
+			}
+		} <span class="pl-k">else</span> { <span class="pl-c"><span class="pl-c">//</span> 父节点是祖父节点的右子节点</span>
+			Node&lt;T&gt; *uncle = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>;
+			<span class="pl-k">if</span> (uncle-&gt;<span class="pl-smi">isRed</span>) {
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				uncle-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				node = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>;
+			} <span class="pl-k">else</span> {
+				<span class="pl-k">if</span> (node == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>) { <span class="pl-c"><span class="pl-c">//</span> RL型，先右旋转为RR型</span>
+					node = node-&gt;<span class="pl-smi">parent</span>;
+					<span class="pl-c1">rotateRight</span>(node);
+				}
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>; <span class="pl-c"><span class="pl-c">//</span> RR型，父节点变黑、祖父节点变红，左旋转祖父节点</span>
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				<span class="pl-c1">rotateLeft</span>(node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">parent</span>);
+			}
+		}
+	}
+
+	root-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>; <span class="pl-c"><span class="pl-c">//</span> 根节点始终为黑</span>
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+Node&lt;T&gt; *RBTree&lt;T&gt;::findMin(Node&lt;T&gt; *node) <span class="pl-k">const</span> {
+	<span class="pl-k">while</span> (node != nil &amp;&amp; node-&gt;<span class="pl-smi">left</span> != nil) {
+		node = node-&gt;<span class="pl-smi">left</span>;
+	}
+	<span class="pl-k">return</span> node;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+Node&lt;T&gt; *RBTree&lt;T&gt;::findMax(Node&lt;T&gt; *node) <span class="pl-k">const</span> {
+	<span class="pl-k">while</span> (node != nil &amp;&amp; node-&gt;<span class="pl-smi">right</span> != nil) {
+		node = node-&gt;<span class="pl-smi">right</span>;
+	}
+	<span class="pl-k">return</span> node;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+Node&lt;T&gt; *RBTree&lt;T&gt;::successor(Node&lt;T&gt; *node) <span class="pl-k">const</span> {
+	<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">right</span> != nil) {
+		<span class="pl-k">return</span> <span class="pl-c1">minimum</span>(node-&gt;<span class="pl-smi">right</span>);
+	}
+	Node&lt;T&gt; *y = node-&gt;<span class="pl-smi">parent</span>;
+	<span class="pl-k">while</span> (y != nil &amp;&amp; node == y-&gt;<span class="pl-smi">right</span>) {
+		node = y;
+		y = y-&gt;<span class="pl-smi">parent</span>;
+	}
+	<span class="pl-k">return</span> y;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+Node&lt;T&gt; *RBTree&lt;T&gt;::predecessor(Node&lt;T&gt; *node) <span class="pl-k">const</span> {
+	<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">left</span> != nil) {
+		<span class="pl-k">return</span> <span class="pl-c1">maximum</span>(node-&gt;<span class="pl-smi">left</span>);
+	}
+	Node&lt;T&gt; *y = node-&gt;<span class="pl-smi">parent</span>;
+	<span class="pl-k">while</span> (y != nil &amp;&amp; node == y-&gt;<span class="pl-smi">left</span>) {
+		node = y;
+		y = y-&gt;<span class="pl-smi">parent</span>;
+	}
+	<span class="pl-k">return</span> y;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::transplant(Node&lt;T&gt; *u, Node&lt;T&gt; *v) {
+	<span class="pl-k">if</span> (u-&gt;<span class="pl-smi">parent</span> == nil)
+		root = v;
+	<span class="pl-k">else</span> <span class="pl-k">if</span> (u == u-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>)
+		u-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span> = v;
+	<span class="pl-k">else</span>
+		u-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span> = v;
+	v-&gt;<span class="pl-smi">parent</span> = u-&gt;<span class="pl-smi">parent</span>;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::erase(<span class="pl-k">const</span> T &amp;data) {
+	Node&lt;T&gt; *node = <span class="pl-c1">find</span>(data);
+	<span class="pl-k">if</span> (node == <span class="pl-c1">nullptr</span>)
+		<span class="pl-k">return</span>;
+
+	Node&lt;T&gt; *x, *y = node;
+	<span class="pl-k">bool</span> yOriginalColor = y-&gt;<span class="pl-smi">isRed</span>;
+
+	<span class="pl-k">if</span> (node-&gt;<span class="pl-smi">left</span> == nil) { <span class="pl-c"><span class="pl-c">//</span> 左子树为空，用右子树替代</span>
+		x = node-&gt;<span class="pl-smi">right</span>;
+		<span class="pl-c1">transplant</span>(node, node-&gt;<span class="pl-smi">right</span>);
+	} <span class="pl-k">else</span> <span class="pl-k">if</span> (node-&gt;<span class="pl-smi">right</span> == nil) { <span class="pl-c"><span class="pl-c">//</span> 右子树为空，用左子树替代</span>
+		x = node-&gt;<span class="pl-smi">left</span>;
+		<span class="pl-c1">transplant</span>(node, node-&gt;<span class="pl-smi">left</span>);
+	} <span class="pl-k">else</span> { <span class="pl-c"><span class="pl-c">//</span> 左右子树均不为空，找到后继节点</span>
+		y = <span class="pl-c1">findMin</span>(node-&gt;<span class="pl-smi">right</span>);
+		yOriginalColor = y-&gt;<span class="pl-smi">isRed</span>;
+		x = y-&gt;<span class="pl-smi">right</span>;
+		<span class="pl-k">if</span> (y-&gt;<span class="pl-smi">parent</span> == node) { <span class="pl-c"><span class="pl-c">//</span> 后继节点是待删除节点的右子节点，直接用右子节点替代</span>
+			<span class="pl-k">if</span> (x != nil)
+				x-&gt;<span class="pl-smi">parent</span> = y;
+		} <span class="pl-k">else</span> { <span class="pl-c"><span class="pl-c">//</span> 用后继节点的右子节点替代后继节点</span>
+			<span class="pl-c1">transplant</span>(y, y-&gt;<span class="pl-smi">right</span>);
+			y-&gt;<span class="pl-smi">right</span> = node-&gt;<span class="pl-smi">right</span>;
+			y-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">parent</span> = y;
+		}
+		<span class="pl-c1">transplant</span>(node, y); <span class="pl-c"><span class="pl-c">//</span> 用后继节点替代待删除节点</span>
+		y-&gt;<span class="pl-smi">left</span> = node-&gt;<span class="pl-smi">left</span>;
+		y-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">parent</span> = y;
+		y-&gt;<span class="pl-smi">isRed</span> = node-&gt;<span class="pl-smi">isRed</span>;
+	}
+	<span class="pl-k">if</span> (!yOriginalColor) { <span class="pl-c"><span class="pl-c">//</span> 删除节点为黑色，修复红黑树性质</span>
+		<span class="pl-c1">eraseFixUp</span>(x);
+	}
+	<span class="pl-k">delete</span> node;
+}
+
+<span class="pl-k">template </span>&lt;<span class="pl-k">typename</span> T&gt;
+<span class="pl-k">void</span> RBTree&lt;T&gt;::eraseFixUp(Node&lt;T&gt; *node) {
+	<span class="pl-k">while</span> (node != root &amp;&amp; !node-&gt;<span class="pl-smi">isRed</span>) { <span class="pl-c"><span class="pl-c">//</span> 当前节点不是根节点且不是红色</span>
+		<span class="pl-k">if</span> (node == node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>) {  <span class="pl-c"><span class="pl-c">//</span> 当前节点是左子节点</span>
+			Node&lt;T&gt; *bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span>;
+			<span class="pl-k">if</span> (bro-&gt;<span class="pl-smi">isRed</span>) { <span class="pl-c"><span class="pl-c">//</span> 兄弟节点是红色, 父节点变红，兄弟节点变黑，左旋父节点，继续修复</span>
+				bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				<span class="pl-c1">rotateLeft</span>(node-&gt;<span class="pl-smi">parent</span>);
+				bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span>;
+			}
+			<span class="pl-k">if</span> (!bro-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">isRed</span> &amp;&amp; !bro-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">isRed</span>) { <span class="pl-c"><span class="pl-c">//</span> 兄弟节点的两个子节点都是黑色，兄弟节点变红，上移继续修复</span>
+				bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				node = node-&gt;<span class="pl-smi">parent</span>;
+			} <span class="pl-k">else</span> { <span class="pl-c"><span class="pl-c">//</span> 兄弟节点至少有一个红色子节点</span>
+				<span class="pl-c"><span class="pl-c">//</span> 兄弟节点的右子节点是黑色，左子节点是红色，RL型，兄弟节点变红，其左子节点变黑，右旋兄弟节点变成RR型</span>
+				<span class="pl-k">if</span> (!bro-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">isRed</span>) {
+					bro-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+					bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+					<span class="pl-c1">rotateRight</span>(bro);
+					bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">right</span>;
+				}
+				<span class="pl-c"><span class="pl-c">//</span> RR型，兄弟节点的右子节点是红色，父节点颜色给兄弟节点，父节点变黑，右子变黑，左旋父节点</span>
+				bro-&gt;<span class="pl-smi">isRed</span> = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				bro-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				<span class="pl-c1">rotateLeft</span>(node-&gt;<span class="pl-smi">parent</span>);
+				node = root;
+			}
+		} <span class="pl-k">else</span> {
+			Node&lt;T&gt; *bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>;
+			<span class="pl-k">if</span> (bro-&gt;<span class="pl-smi">isRed</span>) {
+				bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				<span class="pl-c1">rotateRight</span>(node-&gt;<span class="pl-smi">parent</span>);
+				bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>;
+			}
+			<span class="pl-k">if</span> (!bro-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">isRed</span> &amp;&amp; !bro-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">isRed</span>) {
+				bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+				node = node-&gt;<span class="pl-smi">parent</span>;
+			} <span class="pl-k">else</span> {
+				<span class="pl-c"><span class="pl-c">//</span> LR型，兄弟节点的左子节点是黑色，兄弟节点变红，其右子节点变黑，左旋兄弟节点变成RR型</span>
+				<span class="pl-k">if</span> (!bro-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">isRed</span>) {
+					bro-&gt;<span class="pl-smi">right</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+					bro-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">true</span>;
+					<span class="pl-c1">rotateLeft</span>(bro);
+					bro = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">left</span>;
+				}
+				<span class="pl-c"><span class="pl-c">//</span> RR型，兄弟节点的左子节点是红色，父节点颜色给兄弟节点，父节点变黑，左子变黑，右旋父节点</span>
+				bro-&gt;<span class="pl-smi">isRed</span> = node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span>;
+				node-&gt;<span class="pl-smi">parent</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				bro-&gt;<span class="pl-smi">left</span>-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+				<span class="pl-c1">rotateRight</span>(node-&gt;<span class="pl-smi">parent</span>);
+				node = root;
+			}
+		}
+	}
+	node-&gt;<span class="pl-smi">isRed</span> = <span class="pl-c1">false</span>;
+}
+
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>() {
+	RBTree&lt;<span class="pl-k">int</span>&gt; tree;
+	tree.<span class="pl-c1">insert</span>(<span class="pl-c1">10</span>);
+	tree.<span class="pl-c1">insert</span>(<span class="pl-c1">5</span>);
+	tree.<span class="pl-c1">insert</span>(<span class="pl-c1">15</span>);
+	tree.<span class="pl-c1">insert</span>(<span class="pl-c1">3</span>);
+	tree.<span class="pl-c1">insert</span>(<span class="pl-c1">7</span>);
+	tree.<span class="pl-c1">insert</span>(<span class="pl-c1">13</span>);
+	tree.<span class="pl-c1">insert</span>(<span class="pl-c1">17</span>);
+
+
+	std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Searching for 7: <span class="pl-pds">"</span></span> &lt;&lt; (tree.<span class="pl-c1">find</span>(<span class="pl-c1">7</span>) != <span class="pl-c1">nullptr</span> ? <span class="pl-s"><span class="pl-pds">"</span>Found<span class="pl-pds">"</span></span> : <span class="pl-s"><span class="pl-pds">"</span>Not Found<span class="pl-pds">"</span></span>) &lt;&lt; std::endl;
+	std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Searching for 8: <span class="pl-pds">"</span></span> &lt;&lt; (tree.<span class="pl-c1">find</span>(<span class="pl-c1">8</span>) != <span class="pl-c1">nullptr</span> ? <span class="pl-s"><span class="pl-pds">"</span>Found<span class="pl-pds">"</span></span> : <span class="pl-s"><span class="pl-pds">"</span>Not Found<span class="pl-pds">"</span></span>) &lt;&lt; std::endl;
+
+	tree.<span class="pl-c1">erase</span>(<span class="pl-c1">7</span>);
+	
+	std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Searching for 7: <span class="pl-pds">"</span></span> &lt;&lt; (tree.<span class="pl-c1">find</span>(<span class="pl-c1">7</span>) != <span class="pl-c1">nullptr</span> ? <span class="pl-s"><span class="pl-pds">"</span>Found<span class="pl-pds">"</span></span> : <span class="pl-s"><span class="pl-pds">"</span>Not Found<span class="pl-pds">"</span></span>) &lt;&lt; std::endl;
+
+	<span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
+<p>结果输出：</p>
+<pre class="notranslate"><code class="notranslate">Searching for 7: Found
+Searching for 8: Not Found
+Searching for 7: Not Found
+</code></pre></div>
+<div style="font-size:small;margin-top:8px;float:right;">转载请注明出处</div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://wellwei.github.io">Wellwei's Blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if("12/05/2024"!=""){
+    var startSite=new Date("12/05/2024");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","wellwei/wellwei.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
